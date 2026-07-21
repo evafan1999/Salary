@@ -1,0 +1,25 @@
+# app name is set by `fly launch` on first run — replace if it differs
+app = "salary-tracker-api"
+primary_region = "syd"
+
+[build]
+
+[env]
+  DATABASE_PATH = "/data/app.db"
+  # CORS_ORIGINS is set here (not a secret) since it's just the frontend's public URL.
+  CORS_ORIGINS = "http://localhost:5173,https://frontend-one-gamma-54.vercel.app"
+
+[mounts]
+  source = "salary_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

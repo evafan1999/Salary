@@ -1,0 +1,22 @@
+# Backend (Python)
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/dev.db
+backend/.env
+
+# Frontend (Node)
+frontend/node_modules/
+frontend/dist/
+frontend/.vercel/
+frontend/.env.local
+# .env.production is committed on purpose: it only holds the public API base
+# URL and Vercel's remote build needs it present to bake the URL into the bundle.
+
+# Editors / OS
+.DS_Store
+
+# Claude Code local settings can contain secrets captured in permission logs
+# (e.g. tokens embedded in previously-approved Bash commands) - never commit.
+.claude/settings.local.json
