@@ -9,7 +9,7 @@ from app.models.job import Job
 from app.models.savings_goal import SavingsGoal
 from app.models.shift import Shift
 from app.services import pay_calculator
-from app.services.rent_projector import total_rent_due_between
+from app.services.rent_projector import total_rent_paid_between
 
 MIN_WEEKS_REMAINING = Decimal("0.01")
 
@@ -52,10 +52,10 @@ def compute_savings_progress(
     session: Session, goal: SavingsGoal, today: date
 ) -> SavingsProgress:
     shift_income = _total_shift_income(session, goal.tracking_start_date, today)
-    rent_due = total_rent_due_between(session, goal.tracking_start_date, today)
+    rent_paid = total_rent_paid_between(session, goal.tracking_start_date, today)
     car_loan_paid = _total_car_loan_payments(session, goal.tracking_start_date, today)
 
-    net_saved_so_far = goal.starting_balance + shift_income - rent_due - car_loan_paid
+    net_saved_so_far = goal.starting_balance + shift_income - rent_paid - car_loan_paid
 
     days_remaining = (goal.target_date - today).days
     weeks_remaining = Decimal(max(days_remaining, 0)) / Decimal(7)

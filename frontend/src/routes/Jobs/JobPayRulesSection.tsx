@@ -38,14 +38,14 @@ export function JobPayRulesSection({ jobId }: { jobId: number }) {
         <button
           type="button"
           onClick={() => setRuleType('preset')}
-          className={`rounded-md px-3 py-1 text-xs ${ruleType === 'preset' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700'}`}
+          className={`rounded-md px-3 py-1 text-xs ${ruleType === 'preset' ? 'bg-glaucous text-white' : 'bg-gray-100 dark:bg-gray-700'}`}
         >
           使用預設費率
         </button>
         <button
           type="button"
           onClick={() => setRuleType('custom')}
-          className={`rounded-md px-3 py-1 text-xs ${ruleType === 'custom' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700'}`}
+          className={`rounded-md px-3 py-1 text-xs ${ruleType === 'custom' ? 'bg-glaucous text-white' : 'bg-gray-100 dark:bg-gray-700'}`}
         >
           自訂費率
         </button>

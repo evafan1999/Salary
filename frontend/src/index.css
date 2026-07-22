@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --color-wisteria: #8ea4d2;
+  --color-glaucous: #6279b8;
+  --color-dusk: #49516f;
+  --color-deepteal: #496f5d;
+  --color-shamrock: #4c9f70;
+}
+
 :root {
   color-scheme: light dark;
 }

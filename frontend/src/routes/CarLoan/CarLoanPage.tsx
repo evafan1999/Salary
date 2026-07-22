@@ -23,7 +23,7 @@ export function CarLoanPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">車貸</h1>
+      <h1 className="text-xl font-semibold text-dusk dark:text-white">車貸</h1>
 
       <Card title="車貸列表">
         <div className="flex flex-col gap-2">
@@ -33,7 +33,7 @@ export function CarLoanPage() {
               onClick={() => setSelectedLoanId(loan.id === selectedLoanId ? null : loan.id)}
               className={`rounded-md border p-2 text-left text-sm ${
                 selectedLoanId === loan.id
-                  ? 'border-blue-400 bg-blue-50 dark:bg-blue-950'
+                  ? 'border-glaucous bg-wisteria/15 dark:bg-glaucous/20'
                   : 'border-gray-200 dark:border-gray-700'
               }`}
             >

@@ -52,3 +52,20 @@ class UpcomingRentDue(BaseModel):
     label: str
     amount: Decimal
     due_date: date
+    is_overdue: bool
+
+
+class RentPaymentCreate(BaseModel):
+    due_date: date
+    paid_date: date
+    amount: Decimal
+    notes: str | None = None
+
+
+class RentPaymentRead(BaseModel):
+    id: int
+    rent_period_id: int
+    due_date: date
+    paid_date: date
+    amount: Decimal
+    notes: str | None

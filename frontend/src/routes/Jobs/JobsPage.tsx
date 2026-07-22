@@ -31,7 +31,7 @@ export function JobsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">工作管理</h1>
+      <h1 className="text-xl font-semibold text-dusk dark:text-white">工作管理</h1>
 
       <Card title="新增工作">
         <form
@@ -77,7 +77,7 @@ export function JobsPage() {
               onClick={() => setSelectedJobId(job.id === selectedJobId ? null : job.id)}
               className={`rounded-md border px-3 py-2 text-left text-sm ${
                 selectedJobId === job.id
-                  ? 'border-blue-400 bg-blue-50 dark:bg-blue-950'
+                  ? 'border-glaucous bg-wisteria/15 dark:bg-glaucous/20'
                   : 'border-gray-200 dark:border-gray-700'
               }`}
             >

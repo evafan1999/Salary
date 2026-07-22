@@ -11,7 +11,7 @@ export function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">總覽</h1>
+      <h1 className="text-xl font-semibold text-dusk dark:text-white">總覽</h1>
 
       <Card title={`本週收入 (${data.current_period_start} ~ ${data.current_period_end})`}>
         <div className="flex flex-col gap-1 text-sm">
@@ -58,7 +58,7 @@ export function DashboardPage() {
               已存 ${formatMoney(data.savings_goal.net_saved_so_far)} / $
               {formatMoney(data.savings_goal.target_amount)}
             </p>
-            <p className="font-semibold text-blue-600 dark:text-blue-400">
+            <p className="font-semibold text-glaucous dark:text-wisteria">
               每週需存 ${formatMoney(data.savings_goal.required_weekly_savings)}
             </p>
           </div>

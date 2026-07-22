@@ -10,11 +10,11 @@ export function Card({
   children: ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div className="rounded-xl border border-wisteria/30 bg-white p-4 shadow-sm dark:border-dusk dark:bg-gray-800">
       {(title || actions) && (
         <div className="mb-3 flex items-center justify-between">
           {title && (
-            <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400">{title}</h2>
+            <h2 className="text-sm font-semibold text-dusk dark:text-wisteria">{title}</h2>
           )}
           {actions}
         </div>

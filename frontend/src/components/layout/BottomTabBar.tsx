@@ -3,7 +3,7 @@ import { navItems } from './navItems'
 
 export function BottomTabBar() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-10 flex border-t border-gray-200 bg-white md:hidden dark:border-gray-700 dark:bg-gray-800">
+    <nav className="fixed inset-x-0 bottom-0 z-10 flex bg-dusk md:hidden">
       {navItems.map((item) => (
         <NavLink
           key={item.path}
@@ -11,9 +11,7 @@ export function BottomTabBar() {
           end={item.path === '/'}
           className={({ isActive }) =>
             `flex flex-1 flex-col items-center gap-0.5 py-2 text-xs ${
-              isActive
-                ? 'text-blue-600 dark:text-blue-400'
-                : 'text-gray-500 dark:text-gray-400'
+              isActive ? 'text-white' : 'text-wisteria'
             }`
           }
         >

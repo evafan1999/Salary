@@ -6,6 +6,7 @@ export const queryKeys = {
     ['shifts', filters ?? {}] as const,
   rentPeriods: ['rent-periods'] as const,
   upcomingRent: ['rent-periods', 'upcoming'] as const,
+  rentPayments: (periodId: number) => ['rent-periods', periodId, 'payments'] as const,
   carLoans: ['car-loans'] as const,
   carLoanPayments: (loanId: number) => ['car-loans', loanId, 'payments'] as const,
   savingsGoal: ['savings-goal'] as const,

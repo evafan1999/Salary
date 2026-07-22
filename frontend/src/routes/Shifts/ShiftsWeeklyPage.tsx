@@ -26,7 +26,7 @@ export function ShiftsWeeklyPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">班表</h1>
+        <h1 className="text-xl font-semibold text-dusk dark:text-white">班表</h1>
         <Button onClick={() => setShowForm(true)}>+ 新增班表</Button>
       </div>
 

@@ -6,9 +6,9 @@ export function Button({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'danger' }) {
   const variantClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
+    primary: 'bg-glaucous text-white hover:bg-dusk',
     secondary:
-      'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600',
+      'bg-wisteria/15 text-dusk hover:bg-wisteria/25 dark:bg-wisteria/10 dark:text-wisteria dark:hover:bg-wisteria/20',
     danger: 'bg-red-600 text-white hover:bg-red-700',
   }[variant]
 

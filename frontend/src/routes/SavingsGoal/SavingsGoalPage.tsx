@@ -39,7 +39,7 @@ export function SavingsGoalPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">存錢目標</h1>
+      <h1 className="text-xl font-semibold text-dusk dark:text-white">存錢目標</h1>
 
       <Card
         title="目前進度"
@@ -64,7 +64,7 @@ export function SavingsGoalPage() {
             </p>
             <p>目前已存: ${formatMoney(goal.net_saved_so_far)}</p>
             <p>剩餘週數: {weeksRemaining.toFixed(1)}</p>
-            <p className="font-semibold text-blue-600 dark:text-blue-400">
+            <p className="font-semibold text-glaucous dark:text-wisteria">
               每週需存: ${formatMoney(goal.required_weekly_savings)}
             </p>
           </div>
@@ -78,18 +78,19 @@ export function SavingsGoalPage() {
               label="存錢目標達成率"
               subtitle={`${goalPercent.toFixed(1)}%`}
               percent={goalPercent}
+              colorClass="bg-glaucous"
             />
             <ProgressBar
               label="時間進度(距離離澳日)"
               subtitle={`${timePercent.toFixed(1)}%`}
               percent={timePercent}
-              colorClass="bg-amber-500"
+              colorClass="bg-wisteria"
             />
             <ProgressBar
               label="每週實際存款 vs 需要存款"
               subtitle={`$${formatMoney(actualWeeklyRate)} / $${formatMoney(requiredWeekly)}`}
               percent={paceRatio}
-              colorClass={paceRatio >= 100 ? 'bg-green-600' : 'bg-red-500'}
+              colorClass={paceRatio >= 100 ? 'bg-shamrock' : 'bg-red-500'}
             />
             {carLoans && carLoans.length > 0 ? (
               carLoans.map((loan) => (
@@ -98,7 +99,7 @@ export function SavingsGoalPage() {
                   label={`車貸還款進度: ${loan.description}`}
                   subtitle={`$${formatMoney(loan.paid_to_date)} / $${formatMoney(loan.total_amount)}`}
                   percent={(Number(loan.paid_to_date) / Number(loan.total_amount)) * 100}
-                  colorClass="bg-purple-600"
+                  colorClass="bg-deepteal"
                 />
               ))
             ) : (

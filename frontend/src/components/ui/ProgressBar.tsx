@@ -2,7 +2,7 @@ export function ProgressBar({
   label,
   subtitle,
   percent,
-  colorClass = 'bg-blue-600',
+  colorClass = 'bg-glaucous',
 }: {
   label: string
   subtitle?: string

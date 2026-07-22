@@ -113,11 +113,38 @@ export interface RentPeriodCreate {
   notes?: string | null
 }
 
+export interface RentPeriodUpdate {
+  label?: string
+  amount?: string
+  cycle_days?: number
+  start_date?: string
+  end_date?: string | null
+  deposit_amount?: string | null
+  notes?: string | null
+}
+
 export interface UpcomingRentDue {
   rent_period_id: number
   label: string
   amount: string
   due_date: string
+  is_overdue: boolean
+}
+
+export interface RentPayment {
+  id: number
+  rent_period_id: number
+  due_date: string
+  paid_date: string
+  amount: string
+  notes: string | null
+}
+
+export interface RentPaymentCreate {
+  due_date: string
+  paid_date: string
+  amount: string
+  notes?: string | null
 }
 
 export interface CarLoan {

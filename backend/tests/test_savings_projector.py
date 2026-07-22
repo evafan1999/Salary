@@ -4,7 +4,7 @@ from decimal import Decimal
 from sqlmodel import Session
 
 from app.models.car_loan import CarLoan, CarLoanPayment
-from app.models.rent_period import RentPeriod
+from app.models.rent_period import RentPayment, RentPeriod
 from app.models.savings_goal import SavingsGoal
 from app.services.savings_projector import MIN_WEEKS_REMAINING, compute_savings_progress
 from tests.test_pay_calculator import make_custom_rule, make_job, make_shift
@@ -21,6 +21,25 @@ def test_net_saved_so_far_only_counts_activity_after_tracking_start(session: Ses
 
     rent = RentPeriod(label="Room", amount=Decimal("300"), cycle_days=14, start_date=date(2026, 6, 1))
     session.add(rent)
+    session.commit()
+    session.refresh(rent)
+
+    session.add(
+        RentPayment(
+            rent_period_id=rent.id,
+            due_date=date(2026, 5, 30),
+            paid_date=date(2026, 6, 15),
+            amount=Decimal("300"),
+        )
+    )  # excluded, paid before tracking start
+    session.add(
+        RentPayment(
+            rent_period_id=rent.id,
+            due_date=date(2026, 7, 13),
+            paid_date=date(2026, 7, 13),
+            amount=Decimal("300"),
+        )
+    )  # included, paid after tracking start
 
     car_loan = CarLoan(description="Car", total_amount=Decimal("5000"), start_date=date(2026, 1, 1))
     session.add(car_loan)
@@ -45,7 +64,7 @@ def test_net_saved_so_far_only_counts_activity_after_tracking_start(session: Ses
     today = date(2026, 7, 21)
     progress = compute_savings_progress(session, goal, today)
 
-    # rent due within [7/1, 7/21] for a fortnightly cycle starting 6/1: only 7/13 -> 1 * 300
+    # rent paid within [7/1, 7/21]: only the 7/13-paid confirmation -> 300
     # shift income: only the 7/10 weekday shift counts -> 8h * 30/hr = 240
     # car loan payments after tracking start: 150
     # net = 1000 + 240 - 300 - 150 = 790
