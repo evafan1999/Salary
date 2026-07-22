@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { Modal } from '../../components/ui/Modal'
-import { formatMoney } from '../../lib/formatMoney'
+import { useCurrency } from '../../contexts/CurrencyContext'
 import {
   useCreateRentPayment,
   useDeleteRentPayment,
@@ -28,6 +28,7 @@ export function RentPeriodDetail({
   const createPayment = useCreateRentPayment(period.id)
   const deletePayment = useDeleteRentPayment(period.id)
 
+  const { format } = useCurrency()
   const editForm = useForm<RentPeriodUpdate>({ defaultValues: period })
   const paymentForm = useForm<RentPaymentCreate>({
     defaultValues: { due_date: period.start_date, paid_date: new Date().toISOString().slice(0, 10) },
@@ -65,7 +66,7 @@ export function RentPeriodDetail({
             className="flex items-center justify-between rounded-md border border-gray-200 p-2 text-xs dark:border-gray-700"
           >
             <span>
-              到期日 {p.due_date} · 實付 {p.paid_date} · ${formatMoney(p.amount)}
+              到期日 {p.due_date} · 實付 {p.paid_date} · {format(p.amount)}
             </span>
             <button onClick={() => deletePayment.mutate(p.id)} className="text-red-500">
               取消確認

@@ -7,7 +7,7 @@ import { Modal } from '../../components/ui/Modal'
 import { ProgressBar } from '../../components/ui/ProgressBar'
 import { useCreateSavingsGoal, useSavingsGoal } from '../../hooks/useSavingsGoal'
 import { useCarLoans } from '../../hooks/useCarLoan'
-import { formatMoney } from '../../lib/formatMoney'
+import { useCurrency } from '../../contexts/CurrencyContext'
 import type { SavingsGoalCreate } from '../../types/api'
 
 const MIN_WEEKS = 0.01
@@ -20,6 +20,7 @@ export function SavingsGoalPage() {
   const { register, handleSubmit, reset } = useForm<SavingsGoalCreate>({
     defaultValues: { starting_balance: '0' },
   })
+  const { format } = useCurrency()
 
   const netSaved = goal ? Number(goal.net_saved_so_far) : 0
   const target = goal ? Number(goal.target_amount) : 0
@@ -60,12 +61,12 @@ export function SavingsGoalPage() {
         {goal && (
           <div className="flex flex-col gap-1 text-sm">
             <p>
-              目標: ${formatMoney(goal.target_amount)} · 離澳日: {goal.target_date}
+              目標: {format(goal.target_amount)} · 離澳日: {goal.target_date}
             </p>
-            <p>目前已存: ${formatMoney(goal.net_saved_so_far)}</p>
+            <p>目前已存: {format(goal.net_saved_so_far)}</p>
             <p>剩餘週數: {weeksRemaining.toFixed(1)}</p>
             <p className="font-semibold text-glaucous dark:text-wisteria">
-              每週需存: ${formatMoney(goal.required_weekly_savings)}
+              每週需存: {format(goal.required_weekly_savings)}
             </p>
           </div>
         )}
@@ -88,7 +89,7 @@ export function SavingsGoalPage() {
             />
             <ProgressBar
               label="每週實際存款 vs 需要存款"
-              subtitle={`$${formatMoney(actualWeeklyRate)} / $${formatMoney(requiredWeekly)}`}
+              subtitle={`${format(actualWeeklyRate)} / ${format(requiredWeekly)}`}
               percent={paceRatio}
               colorClass={paceRatio >= 100 ? 'bg-shamrock' : 'bg-red-500'}
             />
@@ -97,7 +98,7 @@ export function SavingsGoalPage() {
                 <ProgressBar
                   key={loan.id}
                   label={`車貸還款進度: ${loan.description}`}
-                  subtitle={`$${formatMoney(loan.paid_to_date)} / $${formatMoney(loan.total_amount)}`}
+                  subtitle={`${format(loan.paid_to_date)} / ${format(loan.total_amount)}`}
                   percent={(Number(loan.paid_to_date) / Number(loan.total_amount)) * 100}
                   colorClass="bg-deepteal"
                 />

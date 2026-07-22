@@ -8,7 +8,7 @@ import {
   useRentPeriods,
   useUpcomingRent,
 } from '../../hooks/useRentPeriods'
-import { formatMoney } from '../../lib/formatMoney'
+import { useCurrency } from '../../contexts/CurrencyContext'
 import type { RentPeriodCreate, UpcomingRentDue } from '../../types/api'
 import { CYCLE_PRESETS } from './cyclePresets'
 import { RentPeriodDetail } from './RentPeriodDetail'
@@ -41,6 +41,7 @@ export function RentPage() {
   const { register, handleSubmit, reset, setValue } = useForm<RentPeriodCreate>({
     defaultValues: { cycle_days: 14 },
   })
+  const { format } = useCurrency()
 
   const selectedPeriod = periods?.find((p) => p.id === selectedPeriodId) ?? null
 
@@ -62,7 +63,7 @@ export function RentPage() {
             >
               <span>
                 {u.is_overdue && <span className="mr-1 font-semibold text-red-600">逾期</span>}
-                {u.label} · ${formatMoney(u.amount)} · {u.due_date}
+                {u.label} · {format(u.amount)} · {u.due_date}
               </span>
               <ConfirmPaidButton item={u} />
             </div>
@@ -167,7 +168,7 @@ export function RentPage() {
             >
               <p className="font-medium">{p.label}</p>
               <p className="text-gray-500">
-                ${formatMoney(p.amount)} / {p.cycle_days}天 · {p.start_date} ~ {p.end_date ?? '目前'}
+                {format(p.amount)} / {p.cycle_days}天 · {p.start_date} ~ {p.end_date ?? '目前'}
               </p>
             </button>
           ))}

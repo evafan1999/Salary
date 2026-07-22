@@ -8,7 +8,7 @@ import {
   useCreateCarLoan,
   useCreateCarLoanPayment,
 } from '../../hooks/useCarLoan'
-import { formatMoney } from '../../lib/formatMoney'
+import { useCurrency } from '../../contexts/CurrencyContext'
 import type { CarLoanCreate, CarLoanPaymentCreate } from '../../types/api'
 
 export function CarLoanPage() {
@@ -20,6 +20,7 @@ export function CarLoanPage() {
   const paymentForm = useForm<CarLoanPaymentCreate>()
   const createPayment = useCreateCarLoanPayment(selectedLoanId ?? 0)
   const { data: payments } = useCarLoanPayments(selectedLoanId ?? 0)
+  const { format } = useCurrency()
 
   return (
     <div className="flex flex-col gap-6">
@@ -39,8 +40,8 @@ export function CarLoanPage() {
             >
               <p className="font-medium">{loan.description}</p>
               <p className="text-xs text-gray-500">
-                總額 ${formatMoney(loan.total_amount)} · 已還 ${formatMoney(loan.paid_to_date)} · 剩餘 $
-                {formatMoney(loan.remaining_balance)}
+                總額 {format(loan.total_amount)} · 已還 {format(loan.paid_to_date)} · 剩餘{' '}
+                {format(loan.remaining_balance)}
               </p>
             </button>
           ))}
@@ -81,7 +82,7 @@ export function CarLoanPage() {
             {payments?.map((p) => (
               <div key={p.id} className="flex justify-between text-sm">
                 <span>{p.payment_date}</span>
-                <span>${formatMoney(p.amount)}</span>
+                <span>{format(p.amount)}</span>
               </div>
             ))}
           </div>

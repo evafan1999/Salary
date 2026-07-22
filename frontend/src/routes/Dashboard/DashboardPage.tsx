@@ -1,9 +1,10 @@
 import { Card } from '../../components/ui/Card'
 import { useDashboardSummary } from '../../hooks/useDashboardSummary'
-import { formatMoney } from '../../lib/formatMoney'
+import { useCurrency } from '../../contexts/CurrencyContext'
 
 export function DashboardPage() {
   const { data, isLoading, error } = useDashboardSummary()
+  const { format } = useCurrency()
 
   if (isLoading) return <p className="text-sm text-gray-500">載入中...</p>
   if (error) return <p className="text-sm text-red-600">載入失敗: {(error as Error).message}</p>
@@ -18,12 +19,12 @@ export function DashboardPage() {
           {data.earnings_by_job.map((e) => (
             <div key={e.job_id} className="flex justify-between">
               <span>{e.job_name}</span>
-              <span>${formatMoney(e.gross_pay)}</span>
+              <span>{format(e.gross_pay)}</span>
             </div>
           ))}
           <div className="mt-2 flex justify-between border-t border-gray-200 pt-2 font-semibold dark:border-gray-700">
             <span>總計</span>
-            <span>${formatMoney(data.total_current_period_earnings)}</span>
+            <span>{format(data.total_current_period_earnings)}</span>
           </div>
         </div>
       </Card>
@@ -34,7 +35,7 @@ export function DashboardPage() {
           <div key={r.rent_period_id} className="flex justify-between text-sm">
             <span>{r.label}</span>
             <span>
-              ${formatMoney(r.amount)} · {r.due_date}
+              {format(r.amount)} · {r.due_date}
             </span>
           </div>
         ))}
@@ -45,7 +46,7 @@ export function DashboardPage() {
         {data.car_loans.map((loan) => (
           <div key={loan.id} className="flex justify-between text-sm">
             <span>{loan.description}</span>
-            <span>剩餘 ${formatMoney(loan.remaining_balance)}</span>
+            <span>剩餘 {format(loan.remaining_balance)}</span>
           </div>
         ))}
       </Card>
@@ -55,11 +56,10 @@ export function DashboardPage() {
         {data.savings_goal && (
           <div className="flex flex-col gap-1 text-sm">
             <p>
-              已存 ${formatMoney(data.savings_goal.net_saved_so_far)} / $
-              {formatMoney(data.savings_goal.target_amount)}
+              已存 {format(data.savings_goal.net_saved_so_far)} / {format(data.savings_goal.target_amount)}
             </p>
             <p className="font-semibold text-glaucous dark:text-wisteria">
-              每週需存 ${formatMoney(data.savings_goal.required_weekly_savings)}
+              每週需存 {format(data.savings_goal.required_weekly_savings)}
             </p>
           </div>
         )}
