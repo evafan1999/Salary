@@ -29,3 +29,14 @@ input,
 select {
   min-width: 0;
 }
+
+/* iOS Safari's native date/time picker widget can render wider than the
+   box the input is given and simply ignore width/min-width entirely,
+   overflowing its own container regardless of the flex/grid layout around
+   it. Turning off native appearance makes it render as a normal sizeable
+   field (it still opens the native picker sheet on tap). */
+input[type="date"],
+input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
