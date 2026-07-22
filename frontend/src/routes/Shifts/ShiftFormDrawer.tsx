@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { Button } from '../../components/ui/Button'
+import { Modal } from '../../components/ui/Modal'
 import { useCreateShift } from '../../hooks/useShifts'
 import { useJobs } from '../../hooks/useJobs'
 import type { ShiftCreate } from '../../types/api'
@@ -15,14 +16,7 @@ export function ShiftFormDrawer({ defaultDate, onClose }: { defaultDate: string;
   })
 
   return (
-    <div className="fixed inset-0 z-20 flex items-end justify-center bg-black/30 md:items-center">
-      <div className="w-full max-w-md rounded-t-xl bg-white p-4 dark:bg-gray-800 md:rounded-xl">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">新增班表</h2>
-          <button onClick={onClose} className="text-sm text-gray-500">
-            關閉
-          </button>
-        </div>
+    <Modal title="新增班表" onClose={onClose}>
         <form
           className="flex flex-col gap-3"
           onSubmit={handleSubmit((values) => {
@@ -87,7 +81,6 @@ export function ShiftFormDrawer({ defaultDate, onClose }: { defaultDate: string;
             <p className="text-xs text-red-600">{(createShift.error as Error).message}</p>
           )}
         </form>
-      </div>
-    </div>
+    </Modal>
   )
 }

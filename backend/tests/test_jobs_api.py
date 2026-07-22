@@ -1,9 +1,3 @@
-def test_requires_auth_token(client):
-    client.headers.pop("Authorization")
-    response = client.get("/api/v1/jobs")
-    assert response.status_code == 401
-
-
 def test_job_crud_roundtrip(client):
     create_resp = client.post(
         "/api/v1/jobs", json={"name": "Cafe A", "employer_type": "award", "state": "NSW"}

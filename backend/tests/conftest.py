@@ -1,6 +1,5 @@
 import os
 
-os.environ["ACCESS_TOKEN"] = "test-token"
 os.environ["CORS_ORIGINS"] = "http://localhost:5173"
 
 import pytest
@@ -29,6 +28,5 @@ def client_fixture(session):
 
     app.dependency_overrides[get_session] = get_session_override
     client = TestClient(app)
-    client.headers.update({"Authorization": "Bearer test-token"})
     yield client
     app.dependency_overrides.clear()

@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { useCreatePayRatePreset, usePayRatePresets } from '../../hooks/usePayRatePresets'
+import { formatMoney } from '../../lib/formatMoney'
 import type { PayRatePresetCreate } from '../../types/api'
 
 export function PayRatePresetsSection() {
@@ -16,8 +17,8 @@ export function PayRatePresetsSection() {
           <div key={preset.id} className="rounded-md border border-gray-200 p-2 text-xs dark:border-gray-700">
             <p className="font-medium text-gray-800 dark:text-gray-100">{preset.name}</p>
             <p className="text-gray-500">
-              平日 ${preset.base_hourly_rate} · 週六 ${preset.saturday_rate} · 週日 $
-              {preset.sunday_rate} · 假日 ${preset.public_holiday_rate}
+              平日 ${formatMoney(preset.base_hourly_rate)} · 週六 ${formatMoney(preset.saturday_rate)} · 週日 $
+              {formatMoney(preset.sunday_rate)} · 假日 ${formatMoney(preset.public_holiday_rate)}
             </p>
           </div>
         ))}

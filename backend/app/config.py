@@ -7,7 +7,6 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_path: str = "./dev.db"
-    access_token: str = "change-me-dev-token"
     cors_origins: str = "http://localhost:5173"
 
     @property

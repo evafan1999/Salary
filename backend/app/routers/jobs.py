@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.models.job import Job
 from app.schemas.job import JobCreate, JobRead, JobUpdate
 
-router = APIRouter(prefix="/api/v1/jobs", tags=["jobs"], dependencies=[Depends(verify_token)])
+router = APIRouter(prefix="/api/v1/jobs", tags=["jobs"])
 
 
 @router.get("", response_model=list[JobRead])

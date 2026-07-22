@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { useCreateJobPayRule, useJobPayRules } from '../../hooks/usePayRatePresets'
 import { usePayRatePresets } from '../../hooks/usePayRatePresets'
+import { formatMoney } from '../../lib/formatMoney'
 import type { JobPayRuleCreate, RuleType } from '../../types/api'
 
 export function JobPayRulesSection({ jobId }: { jobId: number }) {
@@ -25,8 +26,8 @@ export function JobPayRulesSection({ jobId }: { jobId: number }) {
             </p>
             {rule.rule_type === 'custom' && (
               <p className="text-gray-500">
-                平日 ${rule.custom_weekday_rate} · 週六 ${rule.custom_saturday_rate} · 週日 $
-                {rule.custom_sunday_rate} · 假日 ${rule.custom_public_holiday_rate}
+                平日 ${formatMoney(rule.custom_weekday_rate)} · 週六 ${formatMoney(rule.custom_saturday_rate)} · 週日 $
+                {formatMoney(rule.custom_sunday_rate)} · 假日 ${formatMoney(rule.custom_public_holiday_rate)}
               </p>
             )}
           </div>

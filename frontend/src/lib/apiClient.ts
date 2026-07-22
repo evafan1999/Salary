@@ -1,46 +1,41 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string
-const TOKEN_STORAGE_KEY = 'salary-tracker-access-token'
-export const UNAUTHORIZED_EVENT = 'salary-tracker-unauthorized'
 
-export class UnauthorizedError extends Error {
-  constructor() {
-    super('Unauthorized')
-    this.name = 'UnauthorizedError'
+// FastAPI error bodies are either {"detail": "some message"} (HTTPException) or
+// {"detail": [{"msg": "...", "loc": [...], ...}, ...]} (Pydantic validation errors).
+// Pull out a human-readable sentence instead of dumping the raw JSON in the UI.
+function extractErrorMessage(rawBody: string, status: number): string {
+  try {
+    const parsed = JSON.parse(rawBody) as { detail?: unknown }
+    if (typeof parsed.detail === 'string') {
+      return parsed.detail
+    }
+    if (Array.isArray(parsed.detail)) {
+      const messages = parsed.detail
+        .map((item) => (typeof item === 'object' && item && 'msg' in item ? String(item.msg) : null))
+        .filter((msg): msg is string => Boolean(msg))
+        .map((msg) => msg.replace(/^Value error, /, ''))
+      if (messages.length > 0) {
+        return messages.join('; ')
+      }
+    }
+  } catch {
+    // Not JSON — fall through to the raw body below.
   }
-}
-
-export function getStoredToken(): string | null {
-  return localStorage.getItem(TOKEN_STORAGE_KEY)
-}
-
-export function setStoredToken(token: string): void {
-  localStorage.setItem(TOKEN_STORAGE_KEY, token)
-}
-
-export function clearStoredToken(): void {
-  localStorage.removeItem(TOKEN_STORAGE_KEY)
+  return `API error ${status}: ${rawBody}`
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = getStoredToken()
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init?.headers,
     },
   })
 
-  if (response.status === 401) {
-    clearStoredToken()
-    window.dispatchEvent(new Event(UNAUTHORIZED_EVENT))
-    throw new UnauthorizedError()
-  }
-
   if (!response.ok) {
     const body = await response.text()
-    throw new Error(`API error ${response.status}: ${body}`)
+    throw new Error(extractErrorMessage(body, response.status))
   }
 
   if (response.status === 204) {

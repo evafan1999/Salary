@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.models.job_pay_rule import JobPayRule
 from app.models.pay_rate_preset import PayRatePreset
@@ -14,7 +13,6 @@ from app.schemas.pay_rate_preset import (
 router = APIRouter(
     prefix="/api/v1/pay-rate-presets",
     tags=["pay-rate-presets"],
-    dependencies=[Depends(verify_token)],
 )
 
 

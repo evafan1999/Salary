@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { useShifts, useDeleteShift } from '../../hooks/useShifts'
 import { useJobs } from '../../hooks/useJobs'
 import { getWeekRange, toIsoDate, formatDisplayDate } from '../../lib/dateHelpers'
+import { formatMoney } from '../../lib/formatMoney'
 import { ShiftFormDrawer } from './ShiftFormDrawer'
 
 export function ShiftsWeeklyPage() {
@@ -41,7 +42,7 @@ export function ShiftsWeeklyPage() {
         </Button>
       </div>
 
-      <Card title={`本週總收入: $${totalGrossPay.toFixed(2)}`}>
+      <Card title={`本週總收入: $${formatMoney(totalGrossPay)}`}>
         {isLoading && <p className="text-sm text-gray-500">載入中...</p>}
         <div className="flex flex-col gap-2">
           {shifts?.length === 0 && <p className="text-sm text-gray-500">這週還沒有班表</p>}
@@ -61,7 +62,7 @@ export function ShiftsWeeklyPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-gray-900 dark:text-gray-100">
-                  ${Number(shift.gross_pay).toFixed(2)}
+                  ${formatMoney(shift.gross_pay)}
                 </span>
                 <button
                   onClick={() => deleteShift.mutate(shift.id)}

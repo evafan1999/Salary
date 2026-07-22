@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { useCreateRentPeriod, useRentPeriods, useUpcomingRent } from '../../hooks/useRentPeriods'
+import { formatMoney } from '../../lib/formatMoney'
 import type { RentPeriodCreate } from '../../types/api'
 
 export function RentPage() {
@@ -22,7 +23,7 @@ export function RentPage() {
           <div key={u.rent_period_id} className="flex justify-between text-sm">
             <span>{u.label}</span>
             <span>
-              ${u.amount} · {u.due_date}
+              ${formatMoney(u.amount)} · {u.due_date}
             </span>
           </div>
         ))}
@@ -73,7 +74,7 @@ export function RentPage() {
             <div key={p.id} className="rounded-md border border-gray-200 p-2 text-xs dark:border-gray-700">
               <p className="font-medium">{p.label}</p>
               <p className="text-gray-500">
-                ${p.amount} / {p.cycle_days}天 · {p.start_date} ~ {p.end_date ?? '目前'}
+                ${formatMoney(p.amount)} / {p.cycle_days}天 · {p.start_date} ~ {p.end_date ?? '目前'}
               </p>
             </div>
           ))}

@@ -1,14 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.models.public_holiday import PublicHoliday
 from app.schemas.public_holiday import PublicHolidayCreate, PublicHolidayRead
 
-router = APIRouter(
-    prefix="/api/v1/public-holidays", tags=["public-holidays"], dependencies=[Depends(verify_token)]
-)
+router = APIRouter(prefix="/api/v1/public-holidays", tags=["public-holidays"])
 
 
 @router.get("", response_model=list[PublicHolidayRead])

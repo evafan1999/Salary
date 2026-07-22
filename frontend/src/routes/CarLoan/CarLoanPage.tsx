@@ -8,6 +8,7 @@ import {
   useCreateCarLoan,
   useCreateCarLoanPayment,
 } from '../../hooks/useCarLoan'
+import { formatMoney } from '../../lib/formatMoney'
 import type { CarLoanCreate, CarLoanPaymentCreate } from '../../types/api'
 
 export function CarLoanPage() {
@@ -38,8 +39,8 @@ export function CarLoanPage() {
             >
               <p className="font-medium">{loan.description}</p>
               <p className="text-xs text-gray-500">
-                總額 ${loan.total_amount} · 已還 ${loan.paid_to_date} · 剩餘 $
-                {loan.remaining_balance}
+                總額 ${formatMoney(loan.total_amount)} · 已還 ${formatMoney(loan.paid_to_date)} · 剩餘 $
+                {formatMoney(loan.remaining_balance)}
               </p>
             </button>
           ))}
@@ -80,7 +81,7 @@ export function CarLoanPage() {
             {payments?.map((p) => (
               <div key={p.id} className="flex justify-between text-sm">
                 <span>{p.payment_date}</span>
-                <span>${p.amount}</span>
+                <span>${formatMoney(p.amount)}</span>
               </div>
             ))}
           </div>

@@ -3,13 +3,12 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.models.job import Job
 from app.models.job_pay_rule import JobPayRule
 from app.schemas.job_pay_rule import JobPayRuleCreate, JobPayRuleRead, JobPayRuleUpdate
 
-router = APIRouter(prefix="/api/v1", tags=["job-pay-rules"], dependencies=[Depends(verify_token)])
+router = APIRouter(prefix="/api/v1", tags=["job-pay-rules"])
 
 
 def _ranges_overlap(

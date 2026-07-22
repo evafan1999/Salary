@@ -3,7 +3,6 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.exceptions import NoApplicableRuleError
 from app.models.job import Job
@@ -11,7 +10,7 @@ from app.models.shift import Shift
 from app.schemas.shift import PayBreakdown, ShiftCreate, ShiftRead, ShiftUpdate
 from app.services import pay_calculator
 
-router = APIRouter(prefix="/api/v1/shifts", tags=["shifts"], dependencies=[Depends(verify_token)])
+router = APIRouter(prefix="/api/v1/shifts", tags=["shifts"])
 
 
 def _get_job_or_404(session: Session, job_id: int) -> Job:

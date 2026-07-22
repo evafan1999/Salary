@@ -3,15 +3,12 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.models.rent_period import RentPeriod
 from app.schemas.rent_period import RentPeriodCreate, RentPeriodRead, RentPeriodUpdate, UpcomingRentDue
 from app.services.rent_projector import get_upcoming_rent
 
-router = APIRouter(
-    prefix="/api/v1/rent-periods", tags=["rent-periods"], dependencies=[Depends(verify_token)]
-)
+router = APIRouter(prefix="/api/v1/rent-periods", tags=["rent-periods"])
 
 
 @router.get("", response_model=list[RentPeriodRead])

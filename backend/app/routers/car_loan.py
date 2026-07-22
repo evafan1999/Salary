@@ -3,7 +3,6 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.models.car_loan import CarLoan, CarLoanPayment
 from app.schemas.car_loan import (
@@ -14,7 +13,7 @@ from app.schemas.car_loan import (
     CarLoanUpdate,
 )
 
-router = APIRouter(prefix="/api/v1/car-loans", tags=["car-loans"], dependencies=[Depends(verify_token)])
+router = APIRouter(prefix="/api/v1/car-loans", tags=["car-loans"])
 
 
 def _to_car_loan_read(session: Session, loan: CarLoan) -> CarLoanRead:

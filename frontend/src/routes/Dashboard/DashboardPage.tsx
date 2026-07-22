@@ -1,5 +1,6 @@
 import { Card } from '../../components/ui/Card'
 import { useDashboardSummary } from '../../hooks/useDashboardSummary'
+import { formatMoney } from '../../lib/formatMoney'
 
 export function DashboardPage() {
   const { data, isLoading, error } = useDashboardSummary()
@@ -17,12 +18,12 @@ export function DashboardPage() {
           {data.earnings_by_job.map((e) => (
             <div key={e.job_id} className="flex justify-between">
               <span>{e.job_name}</span>
-              <span>${Number(e.gross_pay).toFixed(2)}</span>
+              <span>${formatMoney(e.gross_pay)}</span>
             </div>
           ))}
           <div className="mt-2 flex justify-between border-t border-gray-200 pt-2 font-semibold dark:border-gray-700">
             <span>總計</span>
-            <span>${Number(data.total_current_period_earnings).toFixed(2)}</span>
+            <span>${formatMoney(data.total_current_period_earnings)}</span>
           </div>
         </div>
       </Card>
@@ -33,7 +34,7 @@ export function DashboardPage() {
           <div key={r.rent_period_id} className="flex justify-between text-sm">
             <span>{r.label}</span>
             <span>
-              ${r.amount} · {r.due_date}
+              ${formatMoney(r.amount)} · {r.due_date}
             </span>
           </div>
         ))}
@@ -44,7 +45,7 @@ export function DashboardPage() {
         {data.car_loans.map((loan) => (
           <div key={loan.id} className="flex justify-between text-sm">
             <span>{loan.description}</span>
-            <span>剩餘 ${loan.remaining_balance}</span>
+            <span>剩餘 ${formatMoney(loan.remaining_balance)}</span>
           </div>
         ))}
       </Card>
@@ -53,9 +54,12 @@ export function DashboardPage() {
         {!data.savings_goal && <p className="text-sm text-gray-500">尚未設定目標</p>}
         {data.savings_goal && (
           <div className="flex flex-col gap-1 text-sm">
-            <p>已存 ${Number(data.savings_goal.net_saved_so_far).toFixed(2)} / ${data.savings_goal.target_amount}</p>
+            <p>
+              已存 ${formatMoney(data.savings_goal.net_saved_so_far)} / $
+              {formatMoney(data.savings_goal.target_amount)}
+            </p>
             <p className="font-semibold text-blue-600 dark:text-blue-400">
-              每週需存 ${Number(data.savings_goal.required_weekly_savings).toFixed(2)}
+              每週需存 ${formatMoney(data.savings_goal.required_weekly_savings)}
             </p>
           </div>
         )}

@@ -4,7 +4,6 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.models.job import Job
 from app.models.savings_goal import SavingsGoal
@@ -16,7 +15,7 @@ from app.routers.car_loan import _to_car_loan_read
 from app.routers.savings_goal import _to_read as savings_goal_to_read
 from app.models.car_loan import CarLoan
 
-router = APIRouter(prefix="/api/v1/dashboard", tags=["dashboard"], dependencies=[Depends(verify_token)])
+router = APIRouter(prefix="/api/v1/dashboard", tags=["dashboard"])
 
 
 def _current_week_range(today: date) -> tuple[date, date]:

@@ -3,15 +3,12 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from app.auth import verify_token
 from app.db import get_session
 from app.models.savings_goal import SavingsGoal
 from app.schemas.savings_goal import SavingsGoalCreate, SavingsGoalRead, SavingsGoalUpdate
 from app.services.savings_projector import compute_savings_progress
 
-router = APIRouter(
-    prefix="/api/v1/savings-goal", tags=["savings-goal"], dependencies=[Depends(verify_token)]
-)
+router = APIRouter(prefix="/api/v1/savings-goal", tags=["savings-goal"])
 
 
 def _to_read(session: Session, goal: SavingsGoal) -> SavingsGoalRead:

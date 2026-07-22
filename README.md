@@ -4,7 +4,8 @@
 
 - **前端**: https://frontend-one-gamma-54.vercel.app
 - **後端 API**: https://salary-tracker-api.fly.dev
-- **存取碼**: 存在 Fly secrets 裡的 `ACCESS_TOKEN`(第一次打開前端網站時需要輸入,之後會存在瀏覽器 localStorage)
+
+⚠️ **這個網站沒有任何登入/驗證機制,是完全公開的**(這是刻意的決定,換取不用每次輸入存取碼的方便)。只要有人知道網址就能看到/修改裡面的薪水、存款目標等資料。如果之後想加回一層保護,可以參考 git 歷史裡拿掉存取碼之前的版本(commit 訊息會提到 access token / auth gate)。
 
 ## 重新部署
 
