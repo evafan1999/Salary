@@ -1,7 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '../lib/apiClient'
 import { queryKeys } from '../lib/queryKeys'
-import type { CarLoan, CarLoanCreate, CarLoanPayment, CarLoanPaymentCreate } from '../types/api'
+import type {
+  CarLoan,
+  CarLoanCreate,
+  CarLoanPayment,
+  CarLoanPaymentCreate,
+  CarLoanUpdate,
+} from '../types/api'
 
 export function useCarLoans() {
   return useQuery({
@@ -17,6 +23,19 @@ export function useCreateCarLoan() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.carLoans })
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary })
+    },
+  })
+}
+
+export function useUpdateCarLoan(loanId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (payload: CarLoanUpdate) =>
+      apiClient.patch<CarLoan>(`/api/v1/car-loans/${loanId}`, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.carLoans })
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary })
+      queryClient.invalidateQueries({ queryKey: queryKeys.savingsGoal })
     },
   })
 }

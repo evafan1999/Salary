@@ -20,3 +20,12 @@ body {
   margin: 0;
   font-family: system-ui, "Segoe UI", Roboto, sans-serif;
 }
+
+/* Flex/grid items default to min-width: auto, which lets a native form
+   control's intrinsic content size (e.g. Safari's wide <input type="date">
+   chrome) refuse to shrink and blow out the layout on narrow screens.
+   Force them to respect their flex/grid track instead. */
+input,
+select {
+  min-width: 0;
+}

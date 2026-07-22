@@ -174,7 +174,11 @@ export function RentPage() {
       </Card>
 
       {selectedPeriod && (
-        <RentPeriodDetail period={selectedPeriod} onClose={() => setSelectedPeriodId(null)} />
+        <RentPeriodDetail
+          key={selectedPeriod.id}
+          period={selectedPeriod}
+          onClose={() => setSelectedPeriodId(null)}
+        />
       )}
     </div>
   )

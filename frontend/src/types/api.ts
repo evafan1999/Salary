@@ -164,6 +164,13 @@ export interface CarLoanCreate {
   notes?: string | null
 }
 
+export interface CarLoanUpdate {
+  description?: string
+  total_amount?: string
+  start_date?: string
+  notes?: string | null
+}
+
 export interface CarLoanPayment {
   id: number
   car_loan_id: number
