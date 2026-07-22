@@ -42,16 +42,16 @@ export function ShiftFormDrawer({ defaultDate, onClose }: { defaultDate: string;
             {...register('shift_date', { required: true })}
             className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
           />
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <input
               type="time"
               {...register('start_time', { required: true })}
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
             />
             <input
               type="time"
               {...register('end_time', { required: true })}
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
             />
           </div>
           <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">

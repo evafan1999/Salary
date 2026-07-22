@@ -106,7 +106,7 @@ export function CarLoanPage() {
             ))}
           </div>
           <form
-            className="flex gap-2"
+            className="flex flex-col gap-2 sm:flex-row"
             onSubmit={paymentForm.handleSubmit((values) =>
               createPayment.mutate(values, { onSuccess: () => paymentForm.reset() }),
             )}
@@ -114,14 +114,14 @@ export function CarLoanPage() {
             <input
               type="date"
               {...paymentForm.register('payment_date', { required: true })}
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
             />
             <input
               {...paymentForm.register('amount', { required: true })}
               placeholder="金額"
-              className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
             />
-            <Button type="submit" disabled={createPayment.isPending}>
+            <Button type="submit" disabled={createPayment.isPending} className="w-full sm:w-auto">
               新增
             </Button>
           </form>

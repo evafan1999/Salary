@@ -77,34 +77,36 @@ export function RentPeriodDetail({
 
       <h3 className="mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400">補登繳款紀錄</h3>
       <form
-        className="grid grid-cols-2 gap-2"
+        className="flex flex-col gap-2"
         onSubmit={paymentForm.handleSubmit((values) =>
           createPayment.mutate(values, { onSuccess: () => paymentForm.reset() }),
         )}
       >
-        <div>
-          <label className="mb-1 block text-xs text-gray-500">到期日(哪一次的租金)</label>
-          <input
-            type="date"
-            {...paymentForm.register('due_date', { required: true })}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-xs text-gray-500">實際繳款日</label>
-          <input
-            type="date"
-            {...paymentForm.register('paid_date', { required: true })}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
-          />
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="sm:flex-1">
+            <label className="mb-1 block text-xs text-gray-500">到期日(哪一次的租金)</label>
+            <input
+              type="date"
+              {...paymentForm.register('due_date', { required: true })}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+            />
+          </div>
+          <div className="sm:flex-1">
+            <label className="mb-1 block text-xs text-gray-500">實際繳款日</label>
+            <input
+              type="date"
+              {...paymentForm.register('paid_date', { required: true })}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+            />
+          </div>
         </div>
         <input
           {...paymentForm.register('amount', { required: true })}
           placeholder="金額"
           defaultValue={period.amount}
-          className="col-span-2 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
         />
-        <Button type="submit" className="col-span-2" disabled={createPayment.isPending}>
+        <Button type="submit" disabled={createPayment.isPending}>
           確認已繳
         </Button>
         {createPayment.isError && (

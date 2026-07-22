@@ -56,7 +56,7 @@ export function JobPayRulesSection({ jobId }: { jobId: number }) {
       </div>
 
       <form
-        className="grid grid-cols-2 gap-2"
+        className="flex flex-col gap-2 sm:grid sm:grid-cols-2"
         onSubmit={handleSubmit((values) => {
           const payload: JobPayRuleCreate = { ...values, rule_type: ruleType }
           createRule.mutate(payload, { onSuccess: () => reset() })
@@ -65,7 +65,7 @@ export function JobPayRulesSection({ jobId }: { jobId: number }) {
         {ruleType === 'preset' ? (
           <select
             {...register('preset_id', { valueAsNumber: true, required: true })}
-            className="col-span-2 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+            className="sm:col-span-2 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
           >
             <option value="">選擇預設費率</option>
             {presets?.map((preset) => (
@@ -101,13 +101,13 @@ export function JobPayRulesSection({ jobId }: { jobId: number }) {
         <input
           type="date"
           {...register('effective_from', { required: true })}
-          className="col-span-2 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+          className="sm:col-span-2 rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
         />
-        <Button type="submit" className="col-span-2" disabled={createRule.isPending}>
+        <Button type="submit" className="sm:col-span-2" disabled={createRule.isPending}>
           新增費率規則
         </Button>
         {createRule.isError && (
-          <p className="col-span-2 text-xs text-red-600">
+          <p className="sm:col-span-2 text-xs text-red-600">
             {(createRule.error as Error).message}
           </p>
         )}
