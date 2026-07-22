@@ -53,6 +53,61 @@ export function CarLoanPage() {
         </div>
       </Card>
 
+      <Card
+        title="還款紀錄"
+        actions={
+          selectedLoan && (
+            <button
+              onClick={() => {
+                editForm.reset(selectedLoan)
+                setShowEdit(true)
+              }}
+              aria-label="編輯車貸"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            >
+              ✏️
+            </button>
+          )
+        }
+      >
+        {!selectedLoan && (
+          <p className="text-sm text-gray-500">請先在上面「車貸列表」選一筆車貸</p>
+        )}
+        {selectedLoan && (
+          <>
+            <div className="mb-3 flex flex-col gap-2">
+              {payments?.length === 0 && <p className="text-sm text-gray-500">尚無還款紀錄</p>}
+              {payments?.map((p) => (
+                <div key={p.id} className="flex justify-between text-sm">
+                  <span>{p.payment_date}</span>
+                  <span>{format(p.amount)}</span>
+                </div>
+              ))}
+            </div>
+            <form
+              className="flex flex-col gap-2 sm:flex-row"
+              onSubmit={paymentForm.handleSubmit((values) =>
+                createPayment.mutate(values, { onSuccess: () => paymentForm.reset() }),
+              )}
+            >
+              <input
+                type="date"
+                {...paymentForm.register('payment_date', { required: true })}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
+              />
+              <input
+                {...paymentForm.register('amount', { required: true })}
+                placeholder="金額"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
+              />
+              <Button type="submit" disabled={createPayment.isPending} className="w-full sm:w-auto">
+                新增
+              </Button>
+            </form>
+          </>
+        )}
+      </Card>
+
       <Card title="新增車貸">
         <form
           className="flex flex-col gap-3"
@@ -80,53 +135,6 @@ export function CarLoanPage() {
           </Button>
         </form>
       </Card>
-
-      {selectedLoan && (
-        <Card
-          title="還款紀錄"
-          actions={
-            <button
-              onClick={() => {
-                editForm.reset(selectedLoan)
-                setShowEdit(true)
-              }}
-              aria-label="編輯車貸"
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-            >
-              ✏️
-            </button>
-          }
-        >
-          <div className="mb-3 flex flex-col gap-2">
-            {payments?.map((p) => (
-              <div key={p.id} className="flex justify-between text-sm">
-                <span>{p.payment_date}</span>
-                <span>{format(p.amount)}</span>
-              </div>
-            ))}
-          </div>
-          <form
-            className="flex flex-col gap-2 sm:flex-row"
-            onSubmit={paymentForm.handleSubmit((values) =>
-              createPayment.mutate(values, { onSuccess: () => paymentForm.reset() }),
-            )}
-          >
-            <input
-              type="date"
-              {...paymentForm.register('payment_date', { required: true })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
-            />
-            <input
-              {...paymentForm.register('amount', { required: true })}
-              placeholder="金額"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
-            />
-            <Button type="submit" disabled={createPayment.isPending} className="w-full sm:w-auto">
-              新增
-            </Button>
-          </form>
-        </Card>
-      )}
 
       {showEdit && selectedLoan && (
         <Modal title="編輯車貸" onClose={() => setShowEdit(false)}>
