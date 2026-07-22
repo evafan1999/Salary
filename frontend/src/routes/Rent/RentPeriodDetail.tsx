@@ -58,12 +58,12 @@ export function RentPeriodDetail({
       </div>
 
       <h3 className="mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400">繳款紀錄</h3>
-      <div className="mb-3 flex flex-col gap-2">
+      <div className="mb-3 flex flex-col">
         {payments?.length === 0 && <p className="text-sm text-gray-500">尚無繳款紀錄</p>}
         {payments?.map((p) => (
           <div
             key={p.id}
-            className="flex items-center justify-between rounded-md border border-gray-200 p-2 text-xs dark:border-gray-700"
+            className="flex items-center justify-between border-b border-gray-100 px-2 py-2 text-xs last:border-b-0 dark:border-gray-700/50"
           >
             <span>
               到期日 {p.due_date} · 實付 {p.paid_date} · {format(p.amount)}

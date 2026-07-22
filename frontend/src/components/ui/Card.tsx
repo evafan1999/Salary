@@ -10,16 +10,16 @@ export function Card({
   children: ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-wisteria/30 bg-white p-4 shadow-sm dark:border-dusk dark:bg-gray-800">
+    <div>
       {(title || actions) && (
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-2 flex items-center justify-between px-1">
           {title && (
             <h2 className="text-sm font-semibold text-dusk dark:text-wisteria">{title}</h2>
           )}
           {actions}
         </div>
       )}
-      {children}
+      <div className="rounded-xl bg-white p-4 dark:bg-gray-800/60">{children}</div>
     </div>
   )
 }

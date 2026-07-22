@@ -55,10 +55,10 @@ export function RentPage() {
           {upcoming?.map((u) => (
             <div
               key={u.rent_period_id}
-              className={`flex items-center justify-between rounded-md border p-2 text-sm ${
+              className={`flex items-center justify-between rounded-md p-2 text-sm ${
                 u.is_overdue
-                  ? 'border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950'
-                  : 'border-gray-200 dark:border-gray-700'
+                  ? 'bg-red-50 dark:bg-red-950'
+                  : 'border-b border-gray-100 last:border-b-0 dark:border-gray-700/50'
               }`}
             >
               <span>
@@ -155,15 +155,13 @@ export function RentPage() {
       </Card>
 
       <Card title="所有房租週期">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           {periods?.map((p) => (
             <button
               key={p.id}
               onClick={() => setSelectedPeriodId(p.id === selectedPeriodId ? null : p.id)}
-              className={`rounded-md border p-2 text-left text-xs ${
-                selectedPeriodId === p.id
-                  ? 'border-glaucous bg-wisteria/15 dark:bg-glaucous/20'
-                  : 'border-gray-200 dark:border-gray-700'
+              className={`border-b border-gray-100 px-2 py-3 text-left text-xs last:border-b-0 dark:border-gray-700/50 ${
+                selectedPeriodId === p.id ? 'bg-wisteria/15 dark:bg-glaucous/20' : ''
               }`}
             >
               <p className="font-medium">{p.label}</p>

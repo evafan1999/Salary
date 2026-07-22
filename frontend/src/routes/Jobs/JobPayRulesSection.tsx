@@ -17,10 +17,13 @@ export function JobPayRulesSection({ jobId }: { jobId: number }) {
 
   return (
     <Card title="這份工作的費率規則">
-      <div className="mb-4 flex flex-col gap-2">
+      <div className="mb-4 flex flex-col">
         {rules?.length === 0 && <p className="text-sm text-gray-500">尚未設定費率規則</p>}
         {rules?.map((rule) => (
-          <div key={rule.id} className="rounded-md border border-gray-200 p-2 text-xs dark:border-gray-700">
+          <div
+            key={rule.id}
+            className="border-b border-gray-100 px-2 py-2 text-xs last:border-b-0 dark:border-gray-700/50"
+          >
             <p className="font-medium">
               {rule.rule_type === 'preset' ? '使用預設費率' : '自訂費率'} · 生效 {rule.effective_from}
               {rule.effective_to ? ` ~ ${rule.effective_to}` : ' ~ 目前'}

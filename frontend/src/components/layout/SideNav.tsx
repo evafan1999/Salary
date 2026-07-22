@@ -3,7 +3,7 @@ import { navItems } from './navItems'
 
 export function SideNav() {
   return (
-    <nav className="hidden w-56 shrink-0 flex-col gap-1 bg-dusk p-4 md:flex">
+    <nav className="hidden w-56 shrink-0 flex-col gap-1 overflow-y-auto bg-dusk p-4 md:sticky md:top-0 md:flex md:h-svh">
       <h1 className="mb-4 px-2 text-lg font-semibold text-white">薪資追蹤</h1>
       {navItems.map((item) => (
         <NavLink

@@ -27,15 +27,13 @@ export function CarLoanPage() {
       <h1 className="text-xl font-semibold text-dusk dark:text-white">車貸</h1>
 
       <Card title="車貸列表">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           {loans?.map((loan) => (
             <button
               key={loan.id}
               onClick={() => setSelectedLoanId(loan.id === selectedLoanId ? null : loan.id)}
-              className={`rounded-md border p-2 text-left text-sm ${
-                selectedLoanId === loan.id
-                  ? 'border-glaucous bg-wisteria/15 dark:bg-glaucous/20'
-                  : 'border-gray-200 dark:border-gray-700'
+              className={`border-b border-gray-100 px-2 py-3 text-left text-sm last:border-b-0 dark:border-gray-700/50 ${
+                selectedLoanId === loan.id ? 'bg-wisteria/15 dark:bg-glaucous/20' : ''
               }`}
             >
               <p className="font-medium">{loan.description}</p>

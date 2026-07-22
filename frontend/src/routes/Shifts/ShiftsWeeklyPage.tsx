@@ -45,12 +45,12 @@ export function ShiftsWeeklyPage() {
 
       <Card title={`本週總收入: ${format(totalGrossPay)}`}>
         {isLoading && <p className="text-sm text-gray-500">載入中...</p>}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           {shifts?.length === 0 && <p className="text-sm text-gray-500">這週還沒有班表</p>}
           {shifts?.map((shift) => (
             <div
               key={shift.id}
-              className="flex items-center justify-between rounded-md border border-gray-200 p-2 text-sm dark:border-gray-700"
+              className="flex items-center justify-between border-b border-gray-100 px-2 py-3 text-sm last:border-b-0 dark:border-gray-700/50"
             >
               <div>
                 <p className="font-medium text-gray-900 dark:text-gray-100">

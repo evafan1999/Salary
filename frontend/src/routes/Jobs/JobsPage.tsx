@@ -70,15 +70,13 @@ export function JobsPage() {
 
       <Card title="工作列表">
         {isLoading && <p className="text-sm text-gray-500">載入中...</p>}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           {jobs?.map((job) => (
             <button
               key={job.id}
               onClick={() => setSelectedJobId(job.id === selectedJobId ? null : job.id)}
-              className={`rounded-md border px-3 py-2 text-left text-sm ${
-                selectedJobId === job.id
-                  ? 'border-glaucous bg-wisteria/15 dark:bg-glaucous/20'
-                  : 'border-gray-200 dark:border-gray-700'
+              className={`border-b border-gray-100 px-2 py-3 text-left text-sm last:border-b-0 dark:border-gray-700/50 ${
+                selectedJobId === job.id ? 'bg-wisteria/15 dark:bg-glaucous/20' : ''
               }`}
             >
               <span className="font-medium">{job.name}</span>{' '}

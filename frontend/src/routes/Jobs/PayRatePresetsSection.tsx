@@ -13,9 +13,12 @@ export function PayRatePresetsSection() {
 
   return (
     <Card title="Fair Work 費率預設(自己從 Pay Guide 填入)">
-      <div className="mb-4 flex flex-col gap-2">
+      <div className="mb-4 flex flex-col">
         {presets?.map((preset) => (
-          <div key={preset.id} className="rounded-md border border-gray-200 p-2 text-xs dark:border-gray-700">
+          <div
+            key={preset.id}
+            className="border-b border-gray-100 px-2 py-2 text-xs last:border-b-0 dark:border-gray-700/50"
+          >
             <p className="font-medium text-gray-800 dark:text-gray-100">{preset.name}</p>
             <p className="text-gray-500">
               平日 {format(preset.base_hourly_rate)} · 週六 {format(preset.saturday_rate)} · 週日{' '}
