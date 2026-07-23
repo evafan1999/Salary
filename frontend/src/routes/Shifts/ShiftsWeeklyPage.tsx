@@ -77,9 +77,7 @@ export function ShiftsWeeklyPage() {
         </div>
       </Card>
 
-      {showForm && (
-        <ShiftFormDrawer defaultDate={toIsoDate(new Date())} onClose={() => setShowForm(false)} />
-      )}
+      {showForm && <ShiftFormDrawer weekStart={start} onClose={() => setShowForm(false)} />}
     </div>
   )
 }
