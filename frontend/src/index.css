@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-wisteria: #8ea4d2;
-  --color-glaucous: #6279b8;
-  --color-dusk: #49516f;
-  --color-deepteal: #496f5d;
+  --color-mist: #e0fbfc;
+  --color-wisteria: #c2dfe3;
+  --color-glaucous: #5c6b73;
+  --color-dusk: #253237;
+  --color-deepteal: #9db4c0;
   --color-shamrock: #4c9f70;
 }
 
