@@ -33,6 +33,26 @@ export function JobsPage() {
     <div className="flex flex-col gap-6">
       <h1 className="text-xl font-semibold text-dusk dark:text-white">工作管理</h1>
 
+      <Card title="工作列表">
+        {isLoading && <p className="text-sm text-gray-500">載入中...</p>}
+        <div className="flex flex-col">
+          {jobs?.map((job) => (
+            <button
+              key={job.id}
+              onClick={() => setSelectedJobId(job.id === selectedJobId ? null : job.id)}
+              className={`border-b border-gray-100 px-2 py-3 text-left text-sm last:border-b-0 dark:border-gray-700/50 ${
+                selectedJobId === job.id ? 'bg-wisteria/15 dark:bg-glaucous/20' : ''
+              }`}
+            >
+              <span className="font-medium">{job.name}</span>{' '}
+              <span className="text-xs text-gray-500">
+                ({job.employer_type === 'cash' ? '現金' : 'Award'} · {job.state})
+              </span>
+            </button>
+          ))}
+        </div>
+      </Card>
+
       <Card title="新增工作">
         <form
           className="flex flex-col gap-3"
@@ -67,26 +87,6 @@ export function JobsPage() {
       </Card>
 
       <PayRatePresetsSection />
-
-      <Card title="工作列表">
-        {isLoading && <p className="text-sm text-gray-500">載入中...</p>}
-        <div className="flex flex-col">
-          {jobs?.map((job) => (
-            <button
-              key={job.id}
-              onClick={() => setSelectedJobId(job.id === selectedJobId ? null : job.id)}
-              className={`border-b border-gray-100 px-2 py-3 text-left text-sm last:border-b-0 dark:border-gray-700/50 ${
-                selectedJobId === job.id ? 'bg-wisteria/15 dark:bg-glaucous/20' : ''
-              }`}
-            >
-              <span className="font-medium">{job.name}</span>{' '}
-              <span className="text-xs text-gray-500">
-                ({job.employer_type === 'cash' ? '現金' : 'Award'} · {job.state})
-              </span>
-            </button>
-          ))}
-        </div>
-      </Card>
 
       {selectedJobId && <JobPayRulesSection jobId={selectedJobId} />}
     </div>
