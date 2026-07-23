@@ -97,14 +97,14 @@ export function SavingsGoalPage() {
               carLoans.map((loan) => (
                 <ProgressBar
                   key={loan.id}
-                  label={`車貸還款進度: ${loan.description}`}
+                  label={`還款進度: ${loan.description}`}
                   subtitle={`${format(loan.paid_to_date)} / ${format(loan.total_amount)}`}
                   percent={(Number(loan.paid_to_date) / Number(loan.total_amount)) * 100}
                   colorClass="bg-deepteal"
                 />
               ))
             ) : (
-              <p className="text-xs text-gray-500">尚未設定車貸</p>
+              <p className="text-xs text-gray-500">尚未設定貸款</p>
             )}
           </div>
         </Card>
@@ -165,7 +165,7 @@ export function SavingsGoalPage() {
                 開始追蹤日期
               </label>
               <p className="mb-1 text-xs text-gray-500">
-                從哪一天開始,系統才會把班表收入、房租、車貸還款算進「目前已存」——通常填今天
+                從哪一天開始,系統才會把班表收入、房租、貸款還款算進「目前已存」——通常填今天
               </p>
               <input
                 type="date"

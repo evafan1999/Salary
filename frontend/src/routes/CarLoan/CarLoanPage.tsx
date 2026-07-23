@@ -9,9 +9,78 @@ import {
   useCreateCarLoan,
   useCreateCarLoanPayment,
   useUpdateCarLoan,
+  useUpdateCarLoanPayment,
 } from '../../hooks/useCarLoan'
 import { useCurrency } from '../../contexts/CurrencyContext'
-import type { CarLoanCreate, CarLoanPaymentCreate, CarLoanUpdate } from '../../types/api'
+import type {
+  CarLoanCreate,
+  CarLoanPayment,
+  CarLoanPaymentCreate,
+  CarLoanPaymentUpdate,
+  CarLoanUpdate,
+} from '../../types/api'
+
+function PaymentRow({ payment, loanId }: { payment: CarLoanPayment; loanId: number }) {
+  const [isEditing, setIsEditing] = useState(false)
+  const updatePayment = useUpdateCarLoanPayment(loanId, payment.id)
+  const { register, handleSubmit, reset } = useForm<CarLoanPaymentUpdate>({
+    defaultValues: { payment_date: payment.payment_date, amount: payment.amount },
+  })
+  const { format } = useCurrency()
+
+  if (!isEditing) {
+    return (
+      <div className="flex items-center justify-between text-sm">
+        <span>{payment.payment_date}</span>
+        <div className="flex items-center gap-2">
+          <span>{format(payment.amount)}</span>
+          <button
+            onClick={() => {
+              reset({ payment_date: payment.payment_date, amount: payment.amount })
+              setIsEditing(true)
+            }}
+            aria-label="編輯還款紀錄"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+          >
+            ✏️
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <form
+      className="flex flex-col gap-2 sm:flex-row sm:items-center"
+      onSubmit={handleSubmit((values) =>
+        updatePayment.mutate(values, { onSuccess: () => setIsEditing(false) }),
+      )}
+    >
+      <input
+        type="date"
+        {...register('payment_date', { required: true })}
+        className="w-full rounded-md border border-gray-300 px-2 py-1 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
+      />
+      <input
+        {...register('amount', { required: true })}
+        placeholder="金額"
+        className="w-full rounded-md border border-gray-300 px-2 py-1 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
+      />
+      <div className="flex gap-2">
+        <Button type="submit" disabled={updatePayment.isPending} className="flex-1 sm:flex-none">
+          儲存
+        </Button>
+        <button
+          type="button"
+          onClick={() => setIsEditing(false)}
+          className="rounded-md bg-gray-100 px-2 py-1 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+        >
+          取消
+        </button>
+      </div>
+    </form>
+  )
+}
 
 export function CarLoanPage() {
   const { data: loans } = useCarLoans()
@@ -31,9 +100,9 @@ export function CarLoanPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold text-dusk dark:text-white">車貸</h1>
+      <h1 className="text-xl font-semibold text-dusk dark:text-white">貸款</h1>
 
-      <Card title="車貸列表">
+      <Card title="貸款列表">
         <div className="flex flex-col">
           {loans?.map((loan) => (
             <button
@@ -62,7 +131,7 @@ export function CarLoanPage() {
                 editForm.reset(selectedLoan)
                 setShowEdit(true)
               }}
-              aria-label="編輯車貸"
+              aria-label="編輯貸款"
               className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
             >
               ✏️
@@ -70,18 +139,13 @@ export function CarLoanPage() {
           )
         }
       >
-        {!selectedLoan && (
-          <p className="text-sm text-gray-500">請先在上面「車貸列表」選一筆車貸</p>
-        )}
+        {!selectedLoan && <p className="text-sm text-gray-500">請先在上面「貸款列表」選一筆</p>}
         {selectedLoan && (
           <>
             <div className="mb-3 flex flex-col gap-2">
               {payments?.length === 0 && <p className="text-sm text-gray-500">尚無還款紀錄</p>}
               {payments?.map((p) => (
-                <div key={p.id} className="flex justify-between text-sm">
-                  <span>{p.payment_date}</span>
-                  <span>{format(p.amount)}</span>
-                </div>
+                <PaymentRow key={p.id} payment={p} loanId={selectedLoan.id} />
               ))}
             </div>
             <form
@@ -108,7 +172,7 @@ export function CarLoanPage() {
         )}
       </Card>
 
-      <Card title="新增車貸">
+      <Card title="新增貸款">
         <form
           className="flex flex-col gap-3"
           onSubmit={loanForm.handleSubmit((values) =>
@@ -117,7 +181,7 @@ export function CarLoanPage() {
         >
           <input
             {...loanForm.register('description', { required: true })}
-            placeholder="車輛描述"
+            placeholder="項目描述,如車貸/跟朋友借的錢"
             className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
           />
           <input
@@ -131,13 +195,13 @@ export function CarLoanPage() {
             className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
           />
           <Button type="submit" disabled={createLoan.isPending}>
-            新增車貸
+            新增貸款
           </Button>
         </form>
       </Card>
 
       {showEdit && selectedLoan && (
-        <Modal title="編輯車貸" onClose={() => setShowEdit(false)}>
+        <Modal title="編輯貸款" onClose={() => setShowEdit(false)}>
           <form
             className="flex flex-col gap-3"
             onSubmit={editForm.handleSubmit((values) =>
@@ -145,7 +209,7 @@ export function CarLoanPage() {
             )}
           >
             <div>
-              <label className="mb-1 block text-xs text-gray-500">車輛描述</label>
+              <label className="mb-1 block text-xs text-gray-500">項目描述</label>
               <input
                 {...editForm.register('description', { required: true })}
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"

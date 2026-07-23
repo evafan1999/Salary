@@ -34,6 +34,12 @@ class CarLoanPaymentCreate(BaseModel):
     notes: str | None = None
 
 
+class CarLoanPaymentUpdate(BaseModel):
+    payment_date: date | None = None
+    amount: Decimal | None = None
+    notes: str | None = None
+
+
 class CarLoanPaymentRead(BaseModel):
     id: int
     car_loan_id: int

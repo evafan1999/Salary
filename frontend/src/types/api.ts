@@ -185,6 +185,12 @@ export interface CarLoanPaymentCreate {
   notes?: string | null
 }
 
+export interface CarLoanPaymentUpdate {
+  payment_date?: string
+  amount?: string
+  notes?: string | null
+}
+
 export interface SavingsGoal {
   id: number
   target_amount: string

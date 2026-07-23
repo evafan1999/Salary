@@ -6,6 +6,7 @@ import type {
   CarLoanCreate,
   CarLoanPayment,
   CarLoanPaymentCreate,
+  CarLoanPaymentUpdate,
   CarLoanUpdate,
 } from '../types/api'
 
@@ -53,6 +54,20 @@ export function useCreateCarLoanPayment(loanId: number) {
   return useMutation({
     mutationFn: (payload: CarLoanPaymentCreate) =>
       apiClient.post<CarLoanPayment>(`/api/v1/car-loans/${loanId}/payments`, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.carLoanPayments(loanId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.carLoans })
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary })
+      queryClient.invalidateQueries({ queryKey: queryKeys.savingsGoal })
+    },
+  })
+}
+
+export function useUpdateCarLoanPayment(loanId: number, paymentId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (payload: CarLoanPaymentUpdate) =>
+      apiClient.patch<CarLoanPayment>(`/api/v1/car-loans/payments/${paymentId}`, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.carLoanPayments(loanId) })
       queryClient.invalidateQueries({ queryKey: queryKeys.carLoans })

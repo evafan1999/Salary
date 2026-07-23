@@ -9,6 +9,7 @@ from app.schemas.car_loan import (
     CarLoanCreate,
     CarLoanPaymentCreate,
     CarLoanPaymentRead,
+    CarLoanPaymentUpdate,
     CarLoanRead,
     CarLoanUpdate,
 )
@@ -76,6 +77,21 @@ def create_car_loan_payment(
     if session.get(CarLoan, loan_id) is None:
         raise HTTPException(status_code=404, detail="Car loan not found")
     payment = CarLoanPayment(car_loan_id=loan_id, **payload.model_dump())
+    session.add(payment)
+    session.commit()
+    session.refresh(payment)
+    return payment
+
+
+@router.patch("/payments/{payment_id}", response_model=CarLoanPaymentRead)
+def update_car_loan_payment(
+    payment_id: int, payload: CarLoanPaymentUpdate, session: Session = Depends(get_session)
+):
+    payment = session.get(CarLoanPayment, payment_id)
+    if payment is None:
+        raise HTTPException(status_code=404, detail="Car loan payment not found")
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(payment, key, value)
     session.add(payment)
     session.commit()
     session.refresh(payment)

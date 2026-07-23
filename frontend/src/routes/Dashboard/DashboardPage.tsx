@@ -41,7 +41,7 @@ export function DashboardPage() {
         ))}
       </Card>
 
-      <Card title="車貸">
+      <Card title="貸款">
         {data.car_loans.length === 0 && <p className="text-sm text-gray-500">尚未設定</p>}
         {data.car_loans.map((loan) => (
           <div key={loan.id} className="flex justify-between text-sm">
