@@ -105,40 +105,39 @@ export function CarLoanPage() {
       <Card title="貸款列表">
         <div className="flex flex-col">
           {loans?.map((loan) => (
-            <button
+            <div
               key={loan.id}
-              onClick={() => setSelectedLoanId(loan.id === selectedLoanId ? null : loan.id)}
-              className={`border-b border-gray-100 px-2 py-3 text-left text-sm last:border-b-0 dark:border-gray-700/50 ${
+              className={`flex items-center justify-between border-b border-gray-100 px-2 py-3 text-sm last:border-b-0 dark:border-gray-700/50 ${
                 selectedLoanId === loan.id ? 'bg-wisteria/15 dark:bg-glaucous/20' : ''
               }`}
             >
-              <p className="font-medium">{loan.description}</p>
-              <p className="text-xs text-gray-500">
-                總額 {format(loan.total_amount)} · 已還 {format(loan.paid_to_date)} · 剩餘{' '}
-                {format(loan.remaining_balance)}
-              </p>
-            </button>
+              <button
+                onClick={() => setSelectedLoanId(loan.id === selectedLoanId ? null : loan.id)}
+                className="flex-1 text-left"
+              >
+                <p className="font-medium">{loan.description}</p>
+                <p className="text-xs text-gray-500">
+                  總額 {format(loan.total_amount)} · 已還 {format(loan.paid_to_date)} · 剩餘{' '}
+                  {format(loan.remaining_balance)}
+                </p>
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedLoanId(loan.id)
+                  editForm.reset(loan)
+                  setShowEdit(true)
+                }}
+                aria-label="編輯貸款"
+                className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                ✏️
+              </button>
+            </div>
           ))}
         </div>
       </Card>
 
-      <Card
-        title="還款紀錄"
-        actions={
-          selectedLoan && (
-            <button
-              onClick={() => {
-                editForm.reset(selectedLoan)
-                setShowEdit(true)
-              }}
-              aria-label="編輯貸款"
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-            >
-              ✏️
-            </button>
-          )
-        }
-      >
+      <Card title="還款紀錄">
         {!selectedLoan && <p className="text-sm text-gray-500">請先在上面「貸款列表」選一筆</p>}
         {selectedLoan && (
           <>
