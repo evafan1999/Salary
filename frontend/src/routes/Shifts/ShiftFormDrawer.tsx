@@ -114,12 +114,14 @@ export function ShiftFormDrawer({ weekStart, onClose }: { weekStart: Date; onClo
             <input type="checkbox" {...register('crosses_midnight')} />
             跨午夜(隔天結束)
           </label>
-          <input
-            type="number"
-            {...register('unpaid_break_minutes', { valueAsNumber: true })}
-            placeholder="無薪休息(分鐘)"
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
-          />
+          <div>
+            <label className="mb-1 block text-xs text-gray-500">無薪休息(分鐘)</label>
+            <input
+              type="number"
+              {...register('unpaid_break_minutes', { valueAsNumber: true })}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+            />
+          </div>
           <select
             {...register('day_type_override')}
             className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
