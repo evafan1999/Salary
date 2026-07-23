@@ -6,13 +6,13 @@ import { DailyExpenseSection } from './DailyExpenseSection'
 type ExpenseTab = 'rent' | 'loan' | 'daily'
 
 const TABS: { key: ExpenseTab; label: string }[] = [
+  { key: 'daily', label: '日常開銷' },
   { key: 'rent', label: '房租' },
   { key: 'loan', label: '貸款' },
-  { key: 'daily', label: '日常開銷' },
 ]
 
 export function ExpensesPage() {
-  const [tab, setTab] = useState<ExpenseTab>('rent')
+  const [tab, setTab] = useState<ExpenseTab>('daily')
 
   return (
     <div className="flex flex-col gap-6">
