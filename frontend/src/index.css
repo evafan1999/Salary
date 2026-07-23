@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Dropped dark mode: only match a class that's never applied anywhere,
+   so every dark: utility in the app permanently stays inactive instead
+   of following the OS/browser color-scheme preference. */
+@custom-variant dark (&:where(.dark-mode-disabled));
+
 @theme {
   --color-mist: #d0d38f;
   --color-wisteria: #9cafb7;
@@ -10,7 +15,7 @@
 }
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 html, body, #root {

@@ -45,28 +45,6 @@ export function DashboardPage() {
         </div>
       </Card>
 
-      <Card title="下次房租到期">
-        {data.upcoming_rent.length === 0 && <p className="text-sm text-gray-500">尚未設定</p>}
-        {data.upcoming_rent.map((r) => (
-          <div key={r.rent_period_id} className="flex justify-between text-sm">
-            <span>{r.label}</span>
-            <span>
-              {format(r.amount)} · {r.due_date}
-            </span>
-          </div>
-        ))}
-      </Card>
-
-      <Card title="貸款">
-        {data.car_loans.length === 0 && <p className="text-sm text-gray-500">尚未設定</p>}
-        {data.car_loans.map((loan) => (
-          <div key={loan.id} className="flex justify-between text-sm">
-            <span>{loan.description}</span>
-            <span>剩餘 {format(loan.remaining_balance)}</span>
-          </div>
-        ))}
-      </Card>
-
       <Card title="存錢目標">
         {!goal && <p className="text-sm text-gray-500">尚未設定目標</p>}
         {goal && (
@@ -91,6 +69,28 @@ export function DashboardPage() {
             />
           </div>
         )}
+      </Card>
+
+      <Card title="下次房租到期">
+        {data.upcoming_rent.length === 0 && <p className="text-sm text-gray-500">尚未設定</p>}
+        {data.upcoming_rent.map((r) => (
+          <div key={r.rent_period_id} className="flex justify-between text-sm">
+            <span>{r.label}</span>
+            <span>
+              {format(r.amount)} · {r.due_date}
+            </span>
+          </div>
+        ))}
+      </Card>
+
+      <Card title="貸款">
+        {data.car_loans.length === 0 && <p className="text-sm text-gray-500">尚未設定</p>}
+        {data.car_loans.map((loan) => (
+          <div key={loan.id} className="flex justify-between text-sm">
+            <span>{loan.description}</span>
+            <span>剩餘 {format(loan.remaining_balance)}</span>
+          </div>
+        ))}
       </Card>
     </div>
   )
