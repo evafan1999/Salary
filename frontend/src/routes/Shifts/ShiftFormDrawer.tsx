@@ -23,8 +23,8 @@ export function ShiftFormDrawer({ weekStart, onClose }: { weekStart: Date; onClo
     control,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<Omit<ShiftCreate, 'shift_date'>>({
-    defaultValues: { crosses_midnight: false, unpaid_break_minutes: 0 },
+  } = useForm<Omit<ShiftCreate, 'shift_date' | 'crosses_midnight'>>({
+    defaultValues: { unpaid_break_minutes: 0 },
   })
 
   function toggleDate(iso: string) {
@@ -42,9 +42,15 @@ export function ShiftFormDrawer({ weekStart, onClose }: { weekStart: Date; onClo
             }
             setSelectionError(null)
             setSubmitError(null)
+            const crosses_midnight = values.end_time <= values.start_time
             const results = await Promise.allSettled(
               selectedDates.map((shift_date) =>
-                createShift.mutateAsync({ ...values, job_id: Number(values.job_id), shift_date }),
+                createShift.mutateAsync({
+                  ...values,
+                  job_id: Number(values.job_id),
+                  shift_date,
+                  crosses_midnight,
+                }),
               ),
             )
             const failedCount = results.filter((r) => r.status === 'rejected').length
@@ -110,10 +116,6 @@ export function ShiftFormDrawer({ weekStart, onClose }: { weekStart: Date; onClo
               />
             </div>
           </div>
-          <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-            <input type="checkbox" {...register('crosses_midnight')} />
-            跨午夜(隔天結束)
-          </label>
           <div>
             <label className="mb-1 block text-xs text-gray-500">無薪休息(分鐘)</label>
             <input
