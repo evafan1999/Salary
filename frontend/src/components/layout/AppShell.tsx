@@ -5,7 +5,7 @@ import { CurrencySelector } from '../CurrencySelector'
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-svh bg-mist dark:bg-gray-900">
+    <div className="flex min-h-svh bg-mist/20 dark:bg-gray-900">
       <SideNav />
       <div className="flex-1 pb-16 md:pb-0">
         <div className="flex justify-end px-4 pt-3">
