@@ -1,6 +1,10 @@
+import { differenceInCalendarDays } from 'date-fns'
 import { Card } from '../../components/ui/Card'
+import { ProgressBar } from '../../components/ui/ProgressBar'
 import { useDashboardSummary } from '../../hooks/useDashboardSummary'
 import { useCurrency } from '../../contexts/CurrencyContext'
+
+const MIN_WEEKS = 0.01
 
 export function DashboardPage() {
   const { data, isLoading, error } = useDashboardSummary()
@@ -9,6 +13,18 @@ export function DashboardPage() {
   if (isLoading) return <p className="text-sm text-gray-500">載入中...</p>
   if (error) return <p className="text-sm text-red-600">載入失敗: {(error as Error).message}</p>
   if (!data) return null
+
+  const goal = data.savings_goal
+  const netSaved = goal ? Number(goal.net_saved_so_far) : 0
+  const target = goal ? Number(goal.target_amount) : 0
+  const requiredWeekly = goal ? Number(goal.required_weekly_savings) : 0
+  const goalPercent = target > 0 ? (netSaved / target) * 100 : 0
+
+  const weeksElapsed = goal
+    ? Math.max(differenceInCalendarDays(new Date(), new Date(goal.tracking_start_date)) / 7, MIN_WEEKS)
+    : MIN_WEEKS
+  const actualWeeklyRate = netSaved / weeksElapsed
+  const paceRatio = requiredWeekly > 0 ? (actualWeeklyRate / requiredWeekly) * 100 : 100
 
   return (
     <div className="flex flex-col gap-4">
@@ -52,15 +68,27 @@ export function DashboardPage() {
       </Card>
 
       <Card title="存錢目標">
-        {!data.savings_goal && <p className="text-sm text-gray-500">尚未設定目標</p>}
-        {data.savings_goal && (
-          <div className="flex flex-col gap-1 text-sm">
+        {!goal && <p className="text-sm text-gray-500">尚未設定目標</p>}
+        {goal && (
+          <div className="flex flex-col gap-3 text-sm">
             <p>
-              已存 {format(data.savings_goal.net_saved_so_far)} / {format(data.savings_goal.target_amount)}
+              已存 {format(goal.net_saved_so_far)} / {format(goal.target_amount)}
             </p>
             <p className="font-semibold text-glaucous dark:text-wisteria">
-              每週需存 {format(data.savings_goal.required_weekly_savings)}
+              每週需存 {format(goal.required_weekly_savings)}
             </p>
+            <ProgressBar
+              label="總進度"
+              subtitle={`${goalPercent.toFixed(1)}%`}
+              percent={goalPercent}
+              colorClass="bg-glaucous"
+            />
+            <ProgressBar
+              label="週進度"
+              subtitle={`${format(actualWeeklyRate)} / ${format(requiredWeekly)}`}
+              percent={paceRatio}
+              colorClass={paceRatio >= 100 ? 'bg-shamrock' : 'bg-red-500'}
+            />
           </div>
         )}
       </Card>
