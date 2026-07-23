@@ -71,6 +71,33 @@ export function RentPage() {
         </div>
       </Card>
 
+      <Card title="所有房租週期">
+        <div className="flex flex-col">
+          {periods?.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => setSelectedPeriodId(p.id === selectedPeriodId ? null : p.id)}
+              className={`border-b border-gray-100 px-2 py-3 text-left text-xs last:border-b-0 dark:border-gray-700/50 ${
+                selectedPeriodId === p.id ? 'bg-wisteria/15 dark:bg-glaucous/20' : ''
+              }`}
+            >
+              <p className="font-medium">{p.label}</p>
+              <p className="text-gray-500">
+                {format(p.amount)} / {p.cycle_days}天 · {p.start_date} ~ {p.end_date ?? '目前'}
+              </p>
+            </button>
+          ))}
+        </div>
+      </Card>
+
+      {selectedPeriod && (
+        <RentPeriodDetail
+          key={selectedPeriod.id}
+          period={selectedPeriod}
+          onClose={() => setSelectedPeriodId(null)}
+        />
+      )}
+
       <Card title="新增房租週期">
         <form
           className="flex flex-col gap-3"
@@ -153,33 +180,6 @@ export function RentPage() {
           </Button>
         </form>
       </Card>
-
-      <Card title="所有房租週期">
-        <div className="flex flex-col">
-          {periods?.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setSelectedPeriodId(p.id === selectedPeriodId ? null : p.id)}
-              className={`border-b border-gray-100 px-2 py-3 text-left text-xs last:border-b-0 dark:border-gray-700/50 ${
-                selectedPeriodId === p.id ? 'bg-wisteria/15 dark:bg-glaucous/20' : ''
-              }`}
-            >
-              <p className="font-medium">{p.label}</p>
-              <p className="text-gray-500">
-                {format(p.amount)} / {p.cycle_days}天 · {p.start_date} ~ {p.end_date ?? '目前'}
-              </p>
-            </button>
-          ))}
-        </div>
-      </Card>
-
-      {selectedPeriod && (
-        <RentPeriodDetail
-          key={selectedPeriod.id}
-          period={selectedPeriod}
-          onClose={() => setSelectedPeriodId(null)}
-        />
-      )}
     </div>
   )
 }
