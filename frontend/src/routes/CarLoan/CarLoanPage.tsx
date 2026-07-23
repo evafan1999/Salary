@@ -20,6 +20,31 @@ import type {
   CarLoanUpdate,
 } from '../../types/api'
 
+const VISIBLE_PAYMENTS_DEFAULT = 5
+
+function PaymentsList({ payments, loanId }: { payments: CarLoanPayment[]; loanId: number }) {
+  const [showAll, setShowAll] = useState(false)
+  const visible = showAll ? payments : payments.slice(0, VISIBLE_PAYMENTS_DEFAULT)
+
+  return (
+    <div className="mb-3 flex flex-col gap-2">
+      {payments.length === 0 && <p className="text-sm text-gray-500">尚無還款紀錄</p>}
+      {visible.map((p) => (
+        <PaymentRow key={p.id} payment={p} loanId={loanId} />
+      ))}
+      {payments.length > VISIBLE_PAYMENTS_DEFAULT && (
+        <button
+          type="button"
+          onClick={() => setShowAll((v) => !v)}
+          className="self-start text-xs text-glaucous dark:text-wisteria"
+        >
+          {showAll ? '收起 ▲' : `顯示更多(共 ${payments.length} 筆) ▼`}
+        </button>
+      )}
+    </div>
+  )
+}
+
 function PaymentRow({ payment, loanId }: { payment: CarLoanPayment; loanId: number }) {
   const [isEditing, setIsEditing] = useState(false)
   const updatePayment = useUpdateCarLoanPayment(loanId, payment.id)
@@ -141,12 +166,7 @@ export function CarLoanPage() {
         {!selectedLoan && <p className="text-sm text-gray-500">請先在上面「貸款列表」選一筆</p>}
         {selectedLoan && (
           <>
-            <div className="mb-3 flex flex-col gap-2">
-              {payments?.length === 0 && <p className="text-sm text-gray-500">尚無還款紀錄</p>}
-              {payments?.map((p) => (
-                <PaymentRow key={p.id} payment={p} loanId={selectedLoan.id} />
-              ))}
-            </div>
+            <PaymentsList key={selectedLoan.id} payments={payments ?? []} loanId={selectedLoan.id} />
             <form
               className="flex flex-col gap-2 sm:flex-row"
               onSubmit={paymentForm.handleSubmit((values) =>
