@@ -13,6 +13,7 @@ import {
 } from '../../hooks/useCarLoan'
 import { useCurrency } from '../../contexts/CurrencyContext'
 import type {
+  CarLoan,
   CarLoanCreate,
   CarLoanPayment,
   CarLoanPaymentCreate,
@@ -107,20 +108,53 @@ function PaymentRow({ payment, loanId }: { payment: CarLoanPayment; loanId: numb
   )
 }
 
+function AddPaymentModal({ loan, onClose }: { loan: CarLoan; onClose: () => void }) {
+  const createPayment = useCreateCarLoanPayment(loan.id)
+  const { register, handleSubmit } = useForm<CarLoanPaymentCreate>()
+
+  return (
+    <Modal title={`新增還款紀錄 - ${loan.description}`} onClose={onClose}>
+      <form
+        className="flex flex-col gap-3"
+        onSubmit={handleSubmit((values) => createPayment.mutate(values, { onSuccess: onClose }))}
+      >
+        <div>
+          <label className="mb-1 block text-xs text-gray-500">還款日期</label>
+          <input
+            type="date"
+            {...register('payment_date', { required: true })}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-gray-500">金額</label>
+          <input
+            {...register('amount', { required: true })}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+          />
+        </div>
+        <Button type="submit" disabled={createPayment.isPending}>
+          新增
+        </Button>
+      </form>
+    </Modal>
+  )
+}
+
 export function CarLoanPage() {
   const { data: loans } = useCarLoans()
   const createLoan = useCreateCarLoan()
   const [selectedLoanId, setSelectedLoanId] = useState<number | null>(null)
   const [showEdit, setShowEdit] = useState(false)
+  const [addPaymentLoanId, setAddPaymentLoanId] = useState<number | null>(null)
 
   const loanForm = useForm<CarLoanCreate>()
-  const paymentForm = useForm<CarLoanPaymentCreate>()
-  const createPayment = useCreateCarLoanPayment(selectedLoanId ?? 0)
   const updateLoan = useUpdateCarLoan(selectedLoanId ?? 0)
   const { data: payments } = useCarLoanPayments(selectedLoanId ?? 0)
   const { format } = useCurrency()
 
   const selectedLoan = loans?.find((loan) => loan.id === selectedLoanId) ?? null
+  const addPaymentLoan = loans?.find((loan) => loan.id === addPaymentLoanId) ?? null
   const editForm = useForm<CarLoanUpdate>({ defaultValues: selectedLoan ?? {} })
 
   return (
@@ -149,11 +183,21 @@ export function CarLoanPage() {
               <button
                 onClick={() => {
                   setSelectedLoanId(loan.id)
+                  setAddPaymentLoanId(loan.id)
+                }}
+                aria-label="新增還款紀錄"
+                className="ml-2 shrink-0 rounded-md bg-shamrock px-2 py-1 text-xs text-white hover:brightness-90"
+              >
+                + 還款
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedLoanId(loan.id)
                   editForm.reset(loan)
                   setShowEdit(true)
                 }}
                 aria-label="編輯貸款"
-                className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                className="ml-2 shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
               >
                 ✏️
               </button>
@@ -165,29 +209,7 @@ export function CarLoanPage() {
       <Card title="還款紀錄">
         {!selectedLoan && <p className="text-sm text-gray-500">請先在上面「貸款列表」選一筆</p>}
         {selectedLoan && (
-          <>
-            <PaymentsList key={selectedLoan.id} payments={payments ?? []} loanId={selectedLoan.id} />
-            <form
-              className="flex flex-col gap-2 sm:flex-row"
-              onSubmit={paymentForm.handleSubmit((values) =>
-                createPayment.mutate(values, { onSuccess: () => paymentForm.reset() }),
-              )}
-            >
-              <input
-                type="date"
-                {...paymentForm.register('payment_date', { required: true })}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
-              />
-              <input
-                {...paymentForm.register('amount', { required: true })}
-                placeholder="金額"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
-              />
-              <Button type="submit" disabled={createPayment.isPending} className="w-full sm:w-auto">
-                新增
-              </Button>
-            </form>
-          </>
+          <PaymentsList key={selectedLoan.id} payments={payments ?? []} loanId={selectedLoan.id} />
         )}
       </Card>
 
@@ -254,6 +276,10 @@ export function CarLoanPage() {
             </Button>
           </form>
         </Modal>
+      )}
+
+      {addPaymentLoan && (
+        <AddPaymentModal loan={addPaymentLoan} onClose={() => setAddPaymentLoanId(null)} />
       )}
     </div>
   )
