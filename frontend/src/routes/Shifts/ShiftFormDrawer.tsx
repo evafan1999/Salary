@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { addDays } from 'date-fns'
 import { Button } from '../../components/ui/Button'
 import { Modal } from '../../components/ui/Modal'
+import { TimeSelect } from '../../components/ui/TimeSelect'
 import { useCreateShift } from '../../hooks/useShifts'
 import { useJobs } from '../../hooks/useJobs'
 import { toIsoDate } from '../../lib/dateHelpers'
@@ -19,6 +20,7 @@ export function ShiftFormDrawer({ weekStart, onClose }: { weekStart: Date; onClo
   const [submitError, setSubmitError] = useState<string | null>(null)
   const {
     register,
+    control,
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<Omit<ShiftCreate, 'shift_date'>>({
@@ -89,16 +91,24 @@ export function ShiftFormDrawer({ weekStart, onClose }: { weekStart: Date; onClo
             {selectionError && <p className="mt-1 text-xs text-red-600">{selectionError}</p>}
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <input
-              type="time"
-              {...register('start_time', { required: true })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
-            />
-            <input
-              type="time"
-              {...register('end_time', { required: true })}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm sm:flex-1 dark:border-gray-600 dark:bg-gray-900"
-            />
+            <div className="sm:flex-1">
+              <label className="mb-1 block text-xs text-gray-500">上班時間</label>
+              <Controller
+                name="start_time"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => <TimeSelect value={field.value} onChange={field.onChange} />}
+              />
+            </div>
+            <div className="sm:flex-1">
+              <label className="mb-1 block text-xs text-gray-500">下班時間</label>
+              <Controller
+                name="end_time"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => <TimeSelect value={field.value} onChange={field.onChange} />}
+              />
+            </div>
           </div>
           <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
             <input type="checkbox" {...register('crosses_midnight')} />
