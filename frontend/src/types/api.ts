@@ -17,6 +17,14 @@ export interface JobCreate {
   notes?: string | null
 }
 
+export interface JobUpdate {
+  name?: string
+  employer_type?: 'award' | 'cash'
+  state?: string
+  is_active?: boolean
+  notes?: string | null
+}
+
 export interface PayRatePreset {
   id: number
   name: string
@@ -63,6 +71,17 @@ export interface JobPayRuleCreate {
   custom_sunday_rate?: string | null
   custom_public_holiday_rate?: string | null
   effective_from: string
+  effective_to?: string | null
+}
+
+export interface JobPayRuleUpdate {
+  rule_type?: RuleType
+  preset_id?: number | null
+  custom_weekday_rate?: string | null
+  custom_saturday_rate?: string | null
+  custom_sunday_rate?: string | null
+  custom_public_holiday_rate?: string | null
+  effective_from?: string
   effective_to?: string | null
 }
 
