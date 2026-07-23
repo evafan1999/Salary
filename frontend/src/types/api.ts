@@ -191,6 +191,28 @@ export interface CarLoanPaymentUpdate {
   notes?: string | null
 }
 
+export interface Expense {
+  id: number
+  description: string
+  amount: string
+  expense_date: string
+  notes: string | null
+}
+
+export interface ExpenseCreate {
+  description: string
+  amount: string
+  expense_date: string
+  notes?: string | null
+}
+
+export interface ExpenseUpdate {
+  description?: string
+  amount?: string
+  expense_date?: string
+  notes?: string | null
+}
+
 export interface SavingsGoal {
   id: number
   target_amount: string

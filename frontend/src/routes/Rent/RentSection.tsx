@@ -32,7 +32,7 @@ function ConfirmPaidButton({ item }: { item: UpcomingRentDue }) {
   )
 }
 
-export function RentPage() {
+export function RentSection() {
   const { data: periods } = useRentPeriods()
   const { data: upcoming } = useUpcomingRent()
   const createPeriod = useCreateRentPeriod()
@@ -47,8 +47,6 @@ export function RentPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold text-dusk dark:text-white">房租</h1>
-
       <Card title="下次到期">
         {upcoming?.length === 0 && <p className="text-sm text-gray-500">尚未設定房租週期</p>}
         <div className="flex flex-col gap-2">

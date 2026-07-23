@@ -8,6 +8,7 @@ from app.db import create_db_and_tables
 from app.routers import (
     car_loan,
     dashboard,
+    expenses,
     job_pay_rules,
     jobs,
     pay_rate_presets,
@@ -48,5 +49,6 @@ app.include_router(public_holidays.router)
 app.include_router(shifts.router)
 app.include_router(rent_periods.router)
 app.include_router(car_loan.router)
+app.include_router(expenses.router)
 app.include_router(savings_goal.router)
 app.include_router(dashboard.router)

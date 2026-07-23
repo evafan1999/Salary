@@ -141,7 +141,7 @@ function AddPaymentModal({ loan, onClose }: { loan: CarLoan; onClose: () => void
   )
 }
 
-export function CarLoanPage() {
+export function LoanSection() {
   const { data: loans } = useCarLoans()
   const createLoan = useCreateCarLoan()
   const [selectedLoanId, setSelectedLoanId] = useState<number | null>(null)
@@ -159,8 +159,6 @@ export function CarLoanPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold text-dusk dark:text-white">貸款</h1>
-
       <Card title="貸款列表">
         <div className="flex flex-col">
           {loans?.map((loan) => (

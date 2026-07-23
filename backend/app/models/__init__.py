@@ -1,4 +1,5 @@
 from app.models.car_loan import CarLoan, CarLoanPayment
+from app.models.expense import Expense
 from app.models.job import Job
 from app.models.job_pay_rule import JobPayRule
 from app.models.pay_rate_preset import PayRatePreset
@@ -10,6 +11,7 @@ from app.models.shift import Shift
 __all__ = [
     "CarLoan",
     "CarLoanPayment",
+    "Expense",
     "Job",
     "JobPayRule",
     "PayRatePreset",

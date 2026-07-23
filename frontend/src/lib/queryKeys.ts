@@ -9,6 +9,7 @@ export const queryKeys = {
   rentPayments: (periodId: number) => ['rent-periods', periodId, 'payments'] as const,
   carLoans: ['car-loans'] as const,
   carLoanPayments: (loanId: number) => ['car-loans', loanId, 'payments'] as const,
+  expenses: ['expenses'] as const,
   savingsGoal: ['savings-goal'] as const,
   dashboardSummary: ['dashboard', 'summary'] as const,
 }
