@@ -13,8 +13,8 @@ from app.models.shift import Shift
 from app.services import pay_calculator
 
 
-def make_job(session: Session, state: str = "NSW") -> Job:
-    job = Job(name="Test Job", employer_type="award", state=state)
+def make_job(session: Session, state: str = "NSW", employer_type: str = "cash") -> Job:
+    job = Job(name="Test Job", employer_type=employer_type, state=state)
     session.add(job)
     session.commit()
     session.refresh(job)
@@ -256,3 +256,26 @@ def test_missing_sunday_rate_raises_clear_error_on_a_sunday_shift(session: Sessi
 
     with pytest.raises(NoApplicableRuleError):
         pay_calculator.compute_gross_pay(session, job, shift)
+
+
+def test_award_job_applies_15_percent_tax_withholding(session: Session):
+    job = make_job(session, employer_type="award")
+    make_custom_rule(session, job, effective_from=date(2026, 1, 1))
+    # 2026-07-20 is a Monday -> weekday rate of 30/hr
+    shift = make_shift(session, job, date(2026, 7, 20), time(9, 0), time(17, 0))
+
+    breakdown = pay_calculator.compute_gross_pay(session, job, shift)
+
+    assert breakdown.hourly_rate_applied == Decimal("25.50")  # 30 * 0.85
+    assert breakdown.gross_pay == Decimal("204.00")  # 8h * 25.50
+
+
+def test_cash_job_has_no_tax_withholding(session: Session):
+    job = make_job(session, employer_type="cash")
+    make_custom_rule(session, job, effective_from=date(2026, 1, 1))
+    shift = make_shift(session, job, date(2026, 7, 20), time(9, 0), time(17, 0))
+
+    breakdown = pay_calculator.compute_gross_pay(session, job, shift)
+
+    assert breakdown.hourly_rate_applied == Decimal("30")
+    assert breakdown.gross_pay == Decimal("240")

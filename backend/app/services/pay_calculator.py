@@ -20,6 +20,9 @@ from app.schemas.shift import (
 
 NATIONAL_HOLIDAY_STATE = "NAT"
 
+# Award jobs are paid through payroll with tax withheld; cash jobs aren't.
+AWARD_TAX_MULTIPLIER = Decimal("0.85")
+
 
 @dataclass
 class ResolvedRate:
@@ -125,6 +128,8 @@ def compute_gross_pay(session: Session, job: Job, shift: Shift) -> PayBreakdown:
     day_type = resolve_day_type(session, job, shift.shift_date, shift.day_type_override)
     resolved_rate = resolve_pay_rule(session, job.id, shift.shift_date)
     hourly_rate = _rate_for_day_type(resolved_rate, day_type)
+    if job.employer_type == "award":
+        hourly_rate = hourly_rate * AWARD_TAX_MULTIPLIER
     worked_hours = compute_worked_hours(
         shift.start_time, shift.end_time, shift.crosses_midnight, shift.unpaid_break_minutes
     )
