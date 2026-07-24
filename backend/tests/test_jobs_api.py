@@ -81,3 +81,39 @@ def test_job_pay_rule_rejects_overlapping_effective_ranges(client):
         },
     )
     assert overlapping.status_code == 422
+
+
+def test_job_pay_rule_allows_omitting_sunday_and_public_holiday_rates(client):
+    job_id = client.post(
+        "/api/v1/jobs", json={"name": "Cafe D", "employer_type": "cash", "state": "NSW"}
+    ).json()["id"]
+
+    response = client.post(
+        f"/api/v1/jobs/{job_id}/pay-rules",
+        json={
+            "rule_type": "custom",
+            "custom_weekday_rate": "20",
+            "custom_saturday_rate": "25",
+            "effective_from": "2026-01-01",
+        },
+    )
+    assert response.status_code == 201
+    body = response.json()
+    assert body["custom_sunday_rate"] is None
+    assert body["custom_public_holiday_rate"] is None
+
+
+def test_job_pay_rule_requires_weekday_and_saturday_rates(client):
+    job_id = client.post(
+        "/api/v1/jobs", json={"name": "Cafe E", "employer_type": "cash", "state": "NSW"}
+    ).json()["id"]
+
+    response = client.post(
+        f"/api/v1/jobs/{job_id}/pay-rules",
+        json={
+            "rule_type": "custom",
+            "custom_saturday_rate": "25",
+            "effective_from": "2026-01-01",
+        },
+    )
+    assert response.status_code == 422

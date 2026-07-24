@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { useShifts, useDeleteShift } from '../../hooks/useShifts'
 import { useJobs } from '../../hooks/useJobs'
 import { getWeekRange, toIsoDate, formatDisplayDate } from '../../lib/dateHelpers'
+import { roundTo2 } from '../../lib/formatNumber'
 import { useCurrency } from '../../contexts/CurrencyContext'
 import { ShiftFormDrawer } from './ShiftFormDrawer'
 import type { Shift } from '../../types/api'
@@ -43,7 +44,7 @@ function ShiftRow({
           {shift.shift_date} · {jobName}
         </p>
         <p className="text-xs text-gray-500">
-          {shift.start_time}–{shift.end_time} · {shift.worked_hours}h · {shift.resolved_day_type}
+          {shift.start_time}–{shift.end_time} · {roundTo2(shift.worked_hours)}h · {shift.resolved_day_type}
         </p>
       </div>
       <div className="flex items-center gap-2">
@@ -121,7 +122,7 @@ export function ShiftsWeeklyPage() {
         </Button>
       </div>
 
-      <Card title={`本週總收入: ${format(totalGrossPay)} · 總時數: ${totalWorkedHours.toFixed(1)}h`}>
+      <Card title={`本週總收入: ${format(totalGrossPay)} · 總時數: ${roundTo2(totalWorkedHours)}h`}>
         {isLoading && <p className="text-sm text-gray-500">載入中...</p>}
         <div className="flex flex-col">
           {shifts?.length === 0 && <p className="text-sm text-gray-500">這週還沒有班表</p>}

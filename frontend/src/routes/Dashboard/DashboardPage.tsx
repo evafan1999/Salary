@@ -57,7 +57,7 @@ export function DashboardPage() {
             </p>
             <ProgressBar
               label="總進度"
-              subtitle={`${goalPercent.toFixed(1)}%`}
+              subtitle={`${goalPercent.toFixed(2)}%`}
               percent={goalPercent}
               colorClass="bg-glaucous"
             />

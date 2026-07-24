@@ -6,19 +6,24 @@ from pydantic import BaseModel, field_validator, model_validator
 from app.schemas.common import empty_str_to_none
 
 
-def _validate_rule_shape(rule_type: str, preset_id, custom_fields: list) -> None:
+def _validate_rule_shape(
+    rule_type: str, preset_id, required_custom_fields: list, all_custom_fields: list
+) -> None:
     if rule_type not in ("preset", "custom"):
         raise ValueError("rule_type must be 'preset' or 'custom'")
     if rule_type == "preset":
         if preset_id is None:
             raise ValueError("preset_id is required when rule_type is 'preset'")
-        if any(f is not None for f in custom_fields):
+        if any(f is not None for f in all_custom_fields):
             raise ValueError("custom_* fields must be empty when rule_type is 'preset'")
     else:
         if preset_id is not None:
             raise ValueError("preset_id must be empty when rule_type is 'custom'")
-        if any(f is None for f in custom_fields):
-            raise ValueError("all custom_* fields are required when rule_type is 'custom'")
+        if any(f is None for f in required_custom_fields):
+            raise ValueError(
+                "custom_weekday_rate and custom_saturday_rate are required when "
+                "rule_type is 'custom'"
+            )
 
 
 class JobPayRuleCreate(BaseModel):
@@ -46,6 +51,7 @@ class JobPayRuleCreate(BaseModel):
         _validate_rule_shape(
             self.rule_type,
             self.preset_id,
+            [self.custom_weekday_rate, self.custom_saturday_rate],
             [
                 self.custom_weekday_rate,
                 self.custom_saturday_rate,

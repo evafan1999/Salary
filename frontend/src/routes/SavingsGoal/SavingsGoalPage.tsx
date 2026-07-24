@@ -64,7 +64,7 @@ export function SavingsGoalPage() {
               目標: {format(goal.target_amount)} · 離澳日: {goal.target_date}
             </p>
             <p>目前已存: {format(goal.net_saved_so_far)}</p>
-            <p>剩餘週數: {weeksRemaining.toFixed(1)}</p>
+            <p>剩餘週數: {weeksRemaining.toFixed(2)}</p>
             <p className="font-semibold text-glaucous dark:text-wisteria">
               每週需存: {format(goal.required_weekly_savings)}
             </p>
@@ -77,13 +77,13 @@ export function SavingsGoalPage() {
           <div className="flex flex-col gap-4">
             <ProgressBar
               label="存錢目標達成率"
-              subtitle={`${goalPercent.toFixed(1)}%`}
+              subtitle={`${goalPercent.toFixed(2)}%`}
               percent={goalPercent}
               colorClass="bg-glaucous"
             />
             <ProgressBar
               label="時間進度(距離離澳日)"
-              subtitle={`${timePercent.toFixed(1)}%`}
+              subtitle={`${timePercent.toFixed(2)}%`}
               percent={timePercent}
               colorClass="bg-wisteria"
             />

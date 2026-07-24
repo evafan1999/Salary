@@ -108,12 +108,17 @@ def compute_worked_hours(
 
 
 def _rate_for_day_type(resolved_rate: ResolvedRate, day_type: str) -> Decimal:
-    return {
+    rate = {
         DAY_TYPE_WEEKDAY: resolved_rate.weekday_rate,
         DAY_TYPE_SATURDAY: resolved_rate.saturday_rate,
         DAY_TYPE_SUNDAY: resolved_rate.sunday_rate,
         DAY_TYPE_PUBLIC_HOLIDAY: resolved_rate.public_holiday_rate,
     }[day_type]
+    if rate is None:
+        raise NoApplicableRuleError(
+            f"No {day_type} rate set for this job's pay rule ({resolved_rate.source_description})"
+        )
+    return rate
 
 
 def compute_gross_pay(session: Session, job: Job, shift: Shift) -> PayBreakdown:

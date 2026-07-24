@@ -16,8 +16,8 @@ interface JobFormValues {
   state: string
   custom_weekday_rate: string
   custom_saturday_rate: string
-  custom_sunday_rate: string
-  custom_public_holiday_rate: string
+  custom_sunday_rate?: string
+  custom_public_holiday_rate?: string
 }
 
 const jobSchema = z.object({
@@ -26,8 +26,8 @@ const jobSchema = z.object({
   state: z.string().min(2, '請輸入州別,如 NSW'),
   custom_weekday_rate: z.string().min(1, '請輸入平日時薪'),
   custom_saturday_rate: z.string().min(1, '請輸入週六時薪'),
-  custom_sunday_rate: z.string().min(1, '請輸入週日時薪'),
-  custom_public_holiday_rate: z.string().min(1, '請輸入公眾假日時薪'),
+  custom_sunday_rate: z.string().optional(),
+  custom_public_holiday_rate: z.string().optional(),
 })
 
 function JobFormModal({
@@ -160,24 +160,18 @@ function JobFormModal({
             )}
           </div>
           <div>
-            <label className="mb-1 block text-xs text-gray-500">週日時薪</label>
+            <label className="mb-1 block text-xs text-gray-500">週日時薪(選填)</label>
             <input
               {...register('custom_sunday_rate')}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
             />
-            {errors.custom_sunday_rate && (
-              <p className="mt-1 text-xs text-red-600">{errors.custom_sunday_rate.message}</p>
-            )}
           </div>
           <div>
-            <label className="mb-1 block text-xs text-gray-500">公眾假日時薪</label>
+            <label className="mb-1 block text-xs text-gray-500">國定假日時薪(選填)</label>
             <input
               {...register('custom_public_holiday_rate')}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
             />
-            {errors.custom_public_holiday_rate && (
-              <p className="mt-1 text-xs text-red-600">{errors.custom_public_holiday_rate.message}</p>
-            )}
           </div>
         </div>
         <Button type="submit" disabled={isSubmitting}>

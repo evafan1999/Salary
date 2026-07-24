@@ -132,7 +132,7 @@ export function ShiftFormDrawer({ weekStart, onClose }: { weekStart: Date; onClo
             <option value="weekday">強制設為平日</option>
             <option value="saturday">強制設為週六</option>
             <option value="sunday">強制設為週日</option>
-            <option value="public_holiday">強制設為公眾假日</option>
+            <option value="public_holiday">強制設為國定假日</option>
           </select>
           <Button type="submit" disabled={isSubmitting}>
             儲存班表{selectedDates.length > 1 ? `(${selectedDates.length} 天)` : ''}

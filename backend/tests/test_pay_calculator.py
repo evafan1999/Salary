@@ -246,3 +246,13 @@ def test_no_applicable_rule_raises_clear_error(session: Session):
 
     with pytest.raises(NoApplicableRuleError):
         pay_calculator.compute_gross_pay(session, job, shift)
+
+
+def test_missing_sunday_rate_raises_clear_error_on_a_sunday_shift(session: Session):
+    job = make_job(session)
+    make_custom_rule(session, job, effective_from=date(2026, 1, 1), sunday=None)
+    # 2026-07-19 is a Sunday
+    shift = make_shift(session, job, date(2026, 7, 19), time(9, 0), time(17, 0))
+
+    with pytest.raises(NoApplicableRuleError):
+        pay_calculator.compute_gross_pay(session, job, shift)
