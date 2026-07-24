@@ -5,6 +5,7 @@ from sqlmodel import Session
 
 from app.models.car_loan import CarLoan, CarLoanPayment
 from app.models.expense import Expense
+from app.models.extra_income import ExtraIncome
 from app.models.rent_period import RentPayment, RentPeriod
 from app.models.savings_goal import SavingsGoal
 from app.services.savings_projector import MIN_WEEKS_REMAINING, compute_savings_progress
@@ -59,6 +60,16 @@ def test_net_saved_so_far_only_counts_activity_after_tracking_start(session: Ses
     session.add(
         Expense(description="Groceries", amount=Decimal("60"), expense_date=date(2026, 7, 15))
     )  # included
+    session.add(
+        ExtraIncome(
+            description="Cash from a friend before tracking",
+            amount=Decimal("50"),
+            income_date=date(2026, 6, 28),
+        )
+    )  # excluded, before tracking start
+    session.add(
+        ExtraIncome(description="Shop downstairs", amount=Decimal("80"), income_date=date(2026, 7, 12))
+    )  # included
     session.commit()
 
     goal = SavingsGoal(
@@ -73,10 +84,11 @@ def test_net_saved_so_far_only_counts_activity_after_tracking_start(session: Ses
 
     # rent paid within [7/1, 7/21]: only the 7/13-paid confirmation -> 300
     # shift income: only the 7/10 weekday shift counts -> 8h * 30/hr = 240
+    # extra income after tracking start: 80
     # car loan payments after tracking start: 150
     # daily expenses after tracking start: 60
-    # net = 1000 + 240 - 300 - 150 - 60 = 730
-    assert progress.net_saved_so_far == Decimal("730")
+    # net = 1000 + 240 + 80 - 300 - 150 - 60 = 810
+    assert progress.net_saved_so_far == Decimal("810")
 
 
 def test_required_weekly_savings_matches_remaining_amount_over_weeks(session: Session):

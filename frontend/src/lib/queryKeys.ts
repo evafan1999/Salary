@@ -10,6 +10,8 @@ export const queryKeys = {
   carLoans: ['car-loans'] as const,
   carLoanPayments: (loanId: number) => ['car-loans', loanId, 'payments'] as const,
   expenses: ['expenses'] as const,
+  extraIncome: (filters?: { start_date?: string; end_date?: string }) =>
+    ['extra-income', filters ?? {}] as const,
   savingsGoal: ['savings-goal'] as const,
   dashboardSummary: ['dashboard', 'summary'] as const,
 }

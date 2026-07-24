@@ -9,6 +9,7 @@ from app.routers import (
     car_loan,
     dashboard,
     expenses,
+    extra_income,
     job_pay_rules,
     jobs,
     pay_rate_presets,
@@ -50,5 +51,6 @@ app.include_router(shifts.router)
 app.include_router(rent_periods.router)
 app.include_router(car_loan.router)
 app.include_router(expenses.router)
+app.include_router(extra_income.router)
 app.include_router(savings_goal.router)
 app.include_router(dashboard.router)

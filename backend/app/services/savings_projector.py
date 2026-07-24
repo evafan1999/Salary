@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 
 from app.models.car_loan import CarLoanPayment
 from app.models.expense import Expense
+from app.models.extra_income import ExtraIncome
 from app.models.job import Job
 from app.models.savings_goal import SavingsGoal
 from app.models.shift import Shift
@@ -59,16 +60,32 @@ def _total_expenses(session: Session, start_date: date, end_date: date) -> Decim
     return sum((e.amount for e in expenses), Decimal("0"))
 
 
+def _total_extra_income(session: Session, start_date: date, end_date: date) -> Decimal:
+    incomes = session.exec(
+        select(ExtraIncome).where(
+            ExtraIncome.income_date >= start_date,
+            ExtraIncome.income_date <= end_date,
+        )
+    ).all()
+    return sum((i.amount for i in incomes), Decimal("0"))
+
+
 def compute_savings_progress(
     session: Session, goal: SavingsGoal, today: date
 ) -> SavingsProgress:
     shift_income = _total_shift_income(session, goal.tracking_start_date, today)
+    extra_income = _total_extra_income(session, goal.tracking_start_date, today)
     rent_paid = total_rent_paid_between(session, goal.tracking_start_date, today)
     car_loan_paid = _total_car_loan_payments(session, goal.tracking_start_date, today)
     other_expenses = _total_expenses(session, goal.tracking_start_date, today)
 
     net_saved_so_far = (
-        goal.starting_balance + shift_income - rent_paid - car_loan_paid - other_expenses
+        goal.starting_balance
+        + shift_income
+        + extra_income
+        - rent_paid
+        - car_loan_paid
+        - other_expenses
     )
 
     days_remaining = (goal.target_date - today).days

@@ -232,6 +232,28 @@ export interface ExpenseUpdate {
   notes?: string | null
 }
 
+export interface ExtraIncome {
+  id: number
+  description: string
+  amount: string
+  income_date: string
+  notes: string | null
+}
+
+export interface ExtraIncomeCreate {
+  description: string
+  amount: string
+  income_date: string
+  notes?: string | null
+}
+
+export interface ExtraIncomeUpdate {
+  description?: string
+  amount?: string
+  income_date?: string
+  notes?: string | null
+}
+
 export interface SavingsGoal {
   id: number
   target_amount: string
