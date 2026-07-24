@@ -93,19 +93,15 @@ export function SavingsGoalPage() {
               percent={paceRatio}
               colorClass={paceRatio >= 100 ? 'bg-shamrock' : 'bg-red-500'}
             />
-            {carLoans && carLoans.length > 0 ? (
-              carLoans.map((loan) => (
-                <ProgressBar
-                  key={loan.id}
-                  label={`還款進度: ${loan.description}`}
-                  subtitle={`${format(loan.paid_to_date)} / ${format(loan.total_amount)}`}
-                  percent={(Number(loan.paid_to_date) / Number(loan.total_amount)) * 100}
-                  colorClass="bg-deepteal"
-                />
-              ))
-            ) : (
-              <p className="text-xs text-gray-500">尚未設定貸款</p>
-            )}
+            {carLoans?.map((loan) => (
+              <ProgressBar
+                key={loan.id}
+                label={`還款進度: ${loan.description}`}
+                subtitle={`${format(loan.paid_to_date)} / ${format(loan.total_amount)}`}
+                percent={(Number(loan.paid_to_date) / Number(loan.total_amount)) * 100}
+                colorClass="bg-deepteal"
+              />
+            ))}
           </div>
         </Card>
       )}
