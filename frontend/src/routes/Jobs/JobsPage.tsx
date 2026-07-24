@@ -8,7 +8,12 @@ import { Modal } from '../../components/ui/Modal'
 import { useCreateJob, useJobs, useUpdateJob } from '../../hooks/useJobs'
 import { useCreateJobPayRule, useJobPayRules, useUpdateJobPayRule } from '../../hooks/useJobPayRules'
 import { toIsoDate } from '../../lib/dateHelpers'
+import { roundTo2 } from '../../lib/formatNumber'
 import type { Job, JobPayRule } from '../../types/api'
+
+function formatRate(rate: string | null | undefined): string {
+  return rate ? String(roundTo2(rate)) : ''
+}
 
 interface JobFormValues {
   name: string
@@ -55,10 +60,10 @@ function JobFormModal({
           name: job.name,
           employer_type: job.employer_type,
           state: job.state,
-          custom_weekday_rate: currentRule?.custom_weekday_rate ?? '',
-          custom_saturday_rate: currentRule?.custom_saturday_rate ?? '',
-          custom_sunday_rate: currentRule?.custom_sunday_rate ?? '',
-          custom_public_holiday_rate: currentRule?.custom_public_holiday_rate ?? '',
+          custom_weekday_rate: formatRate(currentRule?.custom_weekday_rate),
+          custom_saturday_rate: formatRate(currentRule?.custom_saturday_rate),
+          custom_sunday_rate: formatRate(currentRule?.custom_sunday_rate),
+          custom_public_holiday_rate: formatRate(currentRule?.custom_public_holiday_rate),
         }
       : { employer_type: 'award', state: 'NSW' },
   })
