@@ -8,6 +8,7 @@ import {
   useCarLoans,
   useCreateCarLoan,
   useCreateCarLoanPayment,
+  useDeleteCarLoan,
   useUpdateCarLoan,
   useUpdateCarLoanPayment,
 } from '../../hooks/useCarLoan'
@@ -150,6 +151,7 @@ export function LoanSection() {
 
   const loanForm = useForm<CarLoanCreate>()
   const updateLoan = useUpdateCarLoan(selectedLoanId ?? 0)
+  const deleteLoan = useDeleteCarLoan()
   const { data: payments } = useCarLoanPayments(selectedLoanId ?? 0)
   const { format } = useCurrency()
 
@@ -198,6 +200,23 @@ export function LoanSection() {
                 className="ml-2 shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
               >
                 ✏️
+              </button>
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm(`確定要刪除「${loan.description}」這筆貸款嗎?(還款紀錄也會一併刪除)`)
+                  ) {
+                    deleteLoan.mutate(loan.id, {
+                      onSuccess: () => {
+                        if (selectedLoanId === loan.id) setSelectedLoanId(null)
+                      },
+                    })
+                  }
+                }}
+                aria-label="刪除貸款"
+                className="ml-2 shrink-0 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+              >
+                🗑️
               </button>
             </div>
           ))}

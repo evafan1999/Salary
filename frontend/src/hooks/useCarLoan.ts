@@ -41,6 +41,18 @@ export function useUpdateCarLoan(loanId: number) {
   })
 }
 
+export function useDeleteCarLoan() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (loanId: number) => apiClient.delete<void>(`/api/v1/car-loans/${loanId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.carLoans })
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary })
+      queryClient.invalidateQueries({ queryKey: queryKeys.savingsGoal })
+    },
+  })
+}
+
 export function useCarLoanPayments(loanId: number) {
   return useQuery({
     queryKey: queryKeys.carLoanPayments(loanId),

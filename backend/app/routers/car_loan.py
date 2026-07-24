@@ -61,6 +61,20 @@ def update_car_loan(loan_id: int, payload: CarLoanUpdate, session: Session = Dep
     return _to_car_loan_read(session, loan)
 
 
+@router.delete("/{loan_id}", status_code=204)
+def delete_car_loan(loan_id: int, session: Session = Depends(get_session)):
+    loan = session.get(CarLoan, loan_id)
+    if loan is None:
+        raise HTTPException(status_code=404, detail="Car loan not found")
+    payments = session.exec(
+        select(CarLoanPayment).where(CarLoanPayment.car_loan_id == loan_id)
+    ).all()
+    for payment in payments:
+        session.delete(payment)
+    session.delete(loan)
+    session.commit()
+
+
 @router.get("/{loan_id}/payments", response_model=list[CarLoanPaymentRead])
 def list_car_loan_payments(loan_id: int, session: Session = Depends(get_session)):
     if session.get(CarLoan, loan_id) is None:
