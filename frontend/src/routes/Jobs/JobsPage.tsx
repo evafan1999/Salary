@@ -23,6 +23,7 @@ interface JobFormValues {
   custom_saturday_rate: string
   custom_sunday_rate?: string
   custom_public_holiday_rate?: string
+  effective_from: string
 }
 
 const jobSchema = z.object({
@@ -33,6 +34,7 @@ const jobSchema = z.object({
   custom_saturday_rate: z.string().min(1, '請輸入週六時薪'),
   custom_sunday_rate: z.string().optional(),
   custom_public_holiday_rate: z.string().optional(),
+  effective_from: z.string().min(1, '請選擇生效日期'),
 })
 
 function JobFormModal({
@@ -48,6 +50,7 @@ function JobFormModal({
   const updateJob = useUpdateJob(job?.id ?? 0)
   const createRule = useCreateJobPayRule()
   const updateRule = useUpdateJobPayRule()
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const {
     register,
@@ -64,50 +67,57 @@ function JobFormModal({
           custom_saturday_rate: formatRate(currentRule?.custom_saturday_rate),
           custom_sunday_rate: formatRate(currentRule?.custom_sunday_rate),
           custom_public_holiday_rate: formatRate(currentRule?.custom_public_holiday_rate),
+          effective_from: currentRule?.effective_from ?? toIsoDate(new Date()),
         }
-      : { employer_type: 'award', state: 'NSW' },
+      : { employer_type: 'award', state: 'NSW', effective_from: toIsoDate(new Date()) },
   })
 
   const onSubmit = handleSubmit(async (values) => {
+    setSubmitError(null)
     const {
       custom_weekday_rate,
       custom_saturday_rate,
       custom_sunday_rate,
       custom_public_holiday_rate,
+      effective_from,
       ...jobFields
     } = values
 
-    if (job) {
-      await updateJob.mutateAsync(jobFields)
-      const ratePayload = {
-        rule_type: 'custom' as const,
-        preset_id: null,
-        custom_weekday_rate,
-        custom_saturday_rate,
-        custom_sunday_rate,
-        custom_public_holiday_rate,
-        effective_from: currentRule?.effective_from ?? toIsoDate(new Date()),
-      }
-      if (currentRule) {
-        await updateRule.mutateAsync({ ruleId: currentRule.id, payload: ratePayload })
-      } else {
-        await createRule.mutateAsync({ jobId: job.id, payload: ratePayload })
-      }
-    } else {
-      const newJob = await createJob.mutateAsync(jobFields)
-      await createRule.mutateAsync({
-        jobId: newJob.id,
-        payload: {
-          rule_type: 'custom',
+    try {
+      if (job) {
+        await updateJob.mutateAsync(jobFields)
+        const ratePayload = {
+          rule_type: 'custom' as const,
+          preset_id: null,
           custom_weekday_rate,
           custom_saturday_rate,
           custom_sunday_rate,
           custom_public_holiday_rate,
-          effective_from: toIsoDate(new Date()),
-        },
-      })
+          effective_from,
+        }
+        if (currentRule) {
+          await updateRule.mutateAsync({ ruleId: currentRule.id, payload: ratePayload })
+        } else {
+          await createRule.mutateAsync({ jobId: job.id, payload: ratePayload })
+        }
+      } else {
+        const newJob = await createJob.mutateAsync(jobFields)
+        await createRule.mutateAsync({
+          jobId: newJob.id,
+          payload: {
+            rule_type: 'custom',
+            custom_weekday_rate,
+            custom_saturday_rate,
+            custom_sunday_rate,
+            custom_public_holiday_rate,
+            effective_from,
+          },
+        })
+      }
+      onClose()
+    } catch (err) {
+      setSubmitError((err as Error).message)
     }
-    onClose()
   })
 
   return (
@@ -179,9 +189,23 @@ function JobFormModal({
             />
           </div>
         </div>
+        <div>
+          <label className="mb-1 block text-xs text-gray-500">
+            生效日期 —— 這份費率從哪天開始適用,要幫更早之前的班表算薪水的話,記得選在那天之前
+          </label>
+          <input
+            type="date"
+            {...register('effective_from', { required: true })}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-900"
+          />
+          {errors.effective_from && (
+            <p className="mt-1 text-xs text-red-600">{errors.effective_from.message}</p>
+          )}
+        </div>
         <Button type="submit" disabled={isSubmitting}>
           {job ? '儲存變更' : '新增工作'}
         </Button>
+        {submitError && <p className="text-xs text-red-600">{submitError}</p>}
       </form>
     </Modal>
   )
