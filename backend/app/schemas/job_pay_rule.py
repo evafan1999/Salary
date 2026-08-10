@@ -72,6 +72,17 @@ class JobPayRuleUpdate(BaseModel):
     effective_from: date | None = None
     effective_to: date | None = None
 
+    _normalize_effective_from = field_validator("effective_from", mode="before")(empty_str_to_none)
+    _normalize_effective_to = field_validator("effective_to", mode="before")(empty_str_to_none)
+    _normalize_weekday = field_validator("custom_weekday_rate", mode="before")(empty_str_to_none)
+    _normalize_saturday = field_validator("custom_saturday_rate", mode="before")(
+        empty_str_to_none
+    )
+    _normalize_sunday = field_validator("custom_sunday_rate", mode="before")(empty_str_to_none)
+    _normalize_public_holiday = field_validator(
+        "custom_public_holiday_rate", mode="before"
+    )(empty_str_to_none)
+
 
 class JobPayRuleRead(BaseModel):
     id: int

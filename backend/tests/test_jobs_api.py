@@ -117,3 +117,38 @@ def test_job_pay_rule_requires_weekday_and_saturday_rates(client):
         },
     )
     assert response.status_code == 422
+
+
+def test_job_pay_rule_update_accepts_empty_string_for_optional_rates(client):
+    job_id = client.post(
+        "/api/v1/jobs", json={"name": "Cafe F", "employer_type": "cash", "state": "NSW"}
+    ).json()["id"]
+    rule_id = client.post(
+        f"/api/v1/jobs/{job_id}/pay-rules",
+        json={
+            "rule_type": "custom",
+            "custom_weekday_rate": "20",
+            "custom_saturday_rate": "25",
+            "custom_sunday_rate": "30",
+            "custom_public_holiday_rate": "40",
+            "effective_from": "2026-01-01",
+        },
+    ).json()["id"]
+
+    # Editing the rule via the frontend form sends "" for cleared optional
+    # fields, same as on create — this used to 422 with "Input should be a
+    # valid decimal" because JobPayRuleUpdate lacked the empty-string
+    # normalizer that JobPayRuleCreate has.
+    response = client.patch(
+        f"/api/v1/pay-rules/{rule_id}",
+        json={
+            "custom_weekday_rate": "22",
+            "custom_saturday_rate": "27",
+            "custom_sunday_rate": "",
+            "custom_public_holiday_rate": "",
+        },
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["custom_sunday_rate"] is None
+    assert body["custom_public_holiday_rate"] is None
