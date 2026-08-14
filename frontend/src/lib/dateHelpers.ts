@@ -21,3 +21,7 @@ export function parseIsoDate(iso: string): Date {
 export function formatDisplayDate(date: Date): string {
   return format(date, 'MM/dd (EEE)')
 }
+
+export function formatDisplayMonth(date: Date): string {
+  return format(date, 'yyyy年MM月')
+}
