@@ -111,6 +111,17 @@ export interface ShiftCreate {
   notes?: string | null
 }
 
+export interface ShiftUpdate {
+  job_id?: number
+  shift_date?: string
+  start_time?: string
+  end_time?: string
+  crosses_midnight?: boolean
+  unpaid_break_minutes?: number
+  day_type_override?: DayType | null
+  notes?: string | null
+}
+
 export interface RentPeriod {
   id: number
   label: string

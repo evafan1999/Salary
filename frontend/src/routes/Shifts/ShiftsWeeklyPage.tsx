@@ -16,6 +16,7 @@ import { getWeekRange, toIsoDate, formatDisplayDate } from '../../lib/dateHelper
 import { roundTo2 } from '../../lib/formatNumber'
 import { useCurrency } from '../../contexts/CurrencyContext'
 import { ShiftFormDrawer } from './ShiftFormDrawer'
+import { EditShiftModal } from './EditShiftModal'
 import type { ExtraIncome, ExtraIncomeCreate, ExtraIncomeUpdate, Shift } from '../../types/api'
 
 function isShiftOver(shift: Shift, now: Date): boolean {
@@ -31,6 +32,7 @@ function ShiftRow({
   jobName,
   isOver,
   confirmingDelete,
+  onEditClick,
   onDeleteClick,
   onCancelDelete,
   onConfirmDelete,
@@ -39,6 +41,7 @@ function ShiftRow({
   jobName: string
   isOver: boolean
   confirmingDelete: boolean
+  onEditClick: () => void
   onDeleteClick: () => void
   onCancelDelete: () => void
   onConfirmDelete: () => void
@@ -61,6 +64,9 @@ function ShiftRow({
             <span className="font-semibold text-gray-900 dark:text-gray-100">
               {format(shift.gross_pay)}
             </span>
+            <button onClick={onEditClick} aria-label="編輯班表" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+              ✏️
+            </button>
             <button onClick={onDeleteClick} className="text-xs text-red-500">
               刪除
             </button>
@@ -255,6 +261,7 @@ export function ShiftsWeeklyPage() {
   const [showExtraIncomeForm, setShowExtraIncomeForm] = useState(false)
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
   const [confirmDeleteIncomeId, setConfirmDeleteIncomeId] = useState<number | null>(null)
+  const [editingShift, setEditingShift] = useState<Shift | null>(null)
   const { start, end } = getWeekRange(anchor)
   const { data: shifts, isLoading } = useShifts({
     start_date: toIsoDate(start),
@@ -318,6 +325,7 @@ export function ShiftsWeeklyPage() {
               jobName={jobName(shift.job_id)}
               isOver={isShiftOver(shift, now)}
               confirmingDelete={confirmDeleteId === shift.id}
+              onEditClick={() => setEditingShift(shift)}
               onDeleteClick={() => setConfirmDeleteId(shift.id)}
               onCancelDelete={() => setConfirmDeleteId(null)}
               onConfirmDelete={() => {
@@ -348,6 +356,9 @@ export function ShiftsWeeklyPage() {
           defaultDate={toIsoDate(new Date())}
           onClose={() => setShowExtraIncomeForm(false)}
         />
+      )}
+      {editingShift && (
+        <EditShiftModal shift={editingShift} onClose={() => setEditingShift(null)} />
       )}
     </div>
   )

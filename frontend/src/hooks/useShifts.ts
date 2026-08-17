@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '../lib/apiClient'
 import { queryKeys } from '../lib/queryKeys'
-import type { Shift, ShiftCreate } from '../types/api'
+import type { Shift, ShiftCreate, ShiftUpdate } from '../types/api'
 
 export function useShifts(filters?: { start_date?: string; end_date?: string; job_id?: number }) {
   const params = new URLSearchParams()
@@ -20,6 +20,18 @@ export function useCreateShift() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: ShiftCreate) => apiClient.post<Shift>('/api/v1/shifts', payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shifts'] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary })
+      queryClient.invalidateQueries({ queryKey: queryKeys.savingsGoal })
+    },
+  })
+}
+
+export function useUpdateShift(shiftId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (payload: ShiftUpdate) => apiClient.patch<Shift>(`/api/v1/shifts/${shiftId}`, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shifts'] })
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary })
