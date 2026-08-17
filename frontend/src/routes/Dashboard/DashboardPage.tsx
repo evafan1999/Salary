@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { addMonths, addWeeks, differenceInCalendarDays, endOfMonth, startOfMonth } from 'date-fns'
 import { Card } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { ProgressBar } from '../../components/ui/ProgressBar'
+import { DailyHoursChart } from './DailyHoursChart'
 import { useDashboardSummary } from '../../hooks/useDashboardSummary'
 import { useShifts } from '../../hooks/useShifts'
 import { useExtraIncome } from '../../hooks/useExtraIncome'
@@ -23,6 +24,12 @@ export function DashboardPage() {
   const { data: jobs } = useJobs()
   const { format } = useCurrency()
 
+  // Stable across re-renders (unlike a bare `new Date()` in the render body,
+  // which would get a new object identity every render and retrigger any
+  // effect keyed on it — e.g. the chart below would destroy/recreate on
+  // every unrelated re-render and never get a chance to paint).
+  const [today] = useState(() => new Date())
+
   const [weekAnchor, setWeekAnchor] = useState(new Date())
   const { start: weekStart, end: weekEnd } = getWeekRange(weekAnchor)
   const { data: weekShifts } = useShifts({
@@ -35,8 +42,11 @@ export function DashboardPage() {
   })
 
   const [monthAnchor, setMonthAnchor] = useState(new Date())
-  const monthStart = startOfMonth(monthAnchor)
-  const monthEnd = endOfMonth(monthAnchor)
+  // Memoized for the same reason `today` is: startOfMonth/endOfMonth return a
+  // new Date object every call even when monthAnchor is unchanged, which
+  // would otherwise retrigger the chart's effect on every unrelated render.
+  const monthStart = useMemo(() => startOfMonth(monthAnchor), [monthAnchor])
+  const monthEnd = useMemo(() => endOfMonth(monthAnchor), [monthAnchor])
   const { data: monthShifts } = useShifts({
     start_date: toIsoDate(monthStart),
     end_date: toIsoDate(monthEnd),
@@ -45,6 +55,14 @@ export function DashboardPage() {
     start_date: toIsoDate(monthStart),
     end_date: toIsoDate(monthEnd),
   })
+
+  const dailyHoursMap = useMemo(() => {
+    const map = new Map<string, number>()
+    monthShifts?.forEach((s) => {
+      map.set(s.shift_date, (map.get(s.shift_date) ?? 0) + Number(s.worked_hours))
+    })
+    return map
+  }, [monthShifts])
 
   if (isLoading) return <p className="text-sm text-gray-500">載入中...</p>
   if (error) return <p className="text-sm text-red-600">載入失敗: {(error as Error).message}</p>
@@ -65,10 +83,6 @@ export function DashboardPage() {
   const monthTotalIncome = monthShiftIncome + monthExtraIncomeTotal
   const monthTotalHours = monthShifts?.reduce((sum, s) => sum + Number(s.worked_hours), 0) ?? 0
 
-  const dailyHoursMap = new Map<string, number>()
-  monthShifts?.forEach((s) => {
-    dailyHoursMap.set(s.shift_date, (dailyHoursMap.get(s.shift_date) ?? 0) + Number(s.worked_hours))
-  })
   const distinctWorkedDays = dailyHoursMap.size
   const avgDailyHours = distinctWorkedDays > 0 ? monthTotalHours / distinctWorkedDays : 0
   const maxDailyHours = dailyHoursMap.size > 0 ? Math.max(...dailyHoursMap.values()) : 0
@@ -80,7 +94,6 @@ export function DashboardPage() {
   // same month, so the income-day set must be clipped to "today or earlier"
   // too — otherwise those future days inflate the count and can make
   // daysOff bottom out at 0 well before the month is actually elapsed.
-  const today = new Date()
   const todayIso = toIsoDate(today)
   const incomeDays = new Set<string>(
     [...dailyHoursMap.keys(), ...(monthExtraIncome?.map((i) => i.income_date) ?? [])].filter(
@@ -181,6 +194,16 @@ export function DashboardPage() {
             <span>{daysOff} 天</span>
           </div>
         </div>
+      </Card>
+
+      <Card title="日均工時">
+        <DailyHoursChart
+          monthStart={monthStart}
+          monthEnd={monthEnd}
+          dailyHoursMap={dailyHoursMap}
+          today={today}
+          avgDailyHours={avgDailyHours}
+        />
       </Card>
 
       <Card title="存錢目標">
