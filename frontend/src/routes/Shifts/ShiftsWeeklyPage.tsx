@@ -15,6 +15,7 @@ import {
 import { getWeekRange, toIsoDate, parseIsoDate, formatDisplayDate } from '../../lib/dateHelpers'
 import { roundTo2 } from '../../lib/formatNumber'
 import { fallbackJobColor } from '../../lib/jobColors'
+import { EditIcon, TrashIcon } from '../../components/ui/icons'
 import { useCurrency } from '../../contexts/CurrencyContext'
 import { ShiftFormDrawer } from './ShiftFormDrawer'
 import { EditShiftModal } from './EditShiftModal'
@@ -93,10 +94,10 @@ function ShiftRow({
               {format(shift.gross_pay)}
             </span>
             <button onClick={onEditClick} aria-label="編輯班表" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-              ✏️
+              <EditIcon />
             </button>
-            <button onClick={onDeleteClick} className="text-xs text-red-500">
-              刪除
+            <button onClick={onDeleteClick} aria-label="刪除班表" className="text-red-500 hover:text-red-600">
+              <TrashIcon />
             </button>
           </>
         )}
@@ -215,10 +216,10 @@ function ExtraIncomeRow({
               aria-label="編輯額外收入"
               className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
             >
-              ✏️
+              <EditIcon />
             </button>
-            <button onClick={onDeleteClick} className="text-xs text-red-500">
-              刪除
+            <button onClick={onDeleteClick} aria-label="刪除額外收入" className="text-red-500 hover:text-red-600">
+              <TrashIcon />
             </button>
           </>
         )}
