@@ -56,10 +56,17 @@ function ShiftRow({
       <div
         className={`flex items-center gap-2 ${isOver ? 'text-gray-400 line-through decoration-gray-400 dark:text-gray-500' : ''}`}
       >
-        <span
-          className="h-2.5 w-2.5 shrink-0 rounded-full"
-          style={{ backgroundColor: jobColor, opacity: isOver ? 0.4 : 1 }}
-        />
+        <span className="relative inline-flex h-2.5 w-2.5 shrink-0">
+          <span className="absolute inset-0 rounded-full" style={{ backgroundColor: jobColor }} />
+          {isOver && (
+            <span
+              aria-hidden="true"
+              className="absolute -right-1 -top-1 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-white text-[7px] leading-none text-emerald-600 ring-1 ring-white dark:bg-gray-900 dark:ring-gray-900"
+            >
+              ✓
+            </span>
+          )}
+        </span>
         <div>
           <p className="font-medium text-gray-900 dark:text-gray-100">{jobName}</p>
           <p className="text-xs text-gray-500">
