@@ -12,8 +12,9 @@ import {
   useExtraIncome,
   useUpdateExtraIncome,
 } from '../../hooks/useExtraIncome'
-import { getWeekRange, toIsoDate, formatDisplayDate } from '../../lib/dateHelpers'
+import { getWeekRange, toIsoDate, parseIsoDate, formatDisplayDate } from '../../lib/dateHelpers'
 import { roundTo2 } from '../../lib/formatNumber'
+import { fallbackJobColor } from '../../lib/jobColors'
 import { useCurrency } from '../../contexts/CurrencyContext'
 import { ShiftFormDrawer } from './ShiftFormDrawer'
 import { EditShiftModal } from './EditShiftModal'
@@ -30,6 +31,7 @@ function isShiftOver(shift: Shift, now: Date): boolean {
 function ShiftRow({
   shift,
   jobName,
+  jobColor,
   isOver,
   confirmingDelete,
   onEditClick,
@@ -39,6 +41,7 @@ function ShiftRow({
 }: {
   shift: Shift
   jobName: string
+  jobColor: string
   isOver: boolean
   confirmingDelete: boolean
   onEditClick: () => void
@@ -50,13 +53,19 @@ function ShiftRow({
 
   return (
     <div className="flex items-center justify-between border-b border-gray-100 px-2 py-3 text-sm last:border-b-0 dark:border-gray-700/50">
-      <div className={isOver ? 'text-gray-400 line-through decoration-gray-400 dark:text-gray-500' : ''}>
-        <p className="font-medium text-gray-900 dark:text-gray-100">
-          {shift.shift_date} · {jobName}
-        </p>
-        <p className="text-xs text-gray-500">
-          {shift.start_time}–{shift.end_time} · {roundTo2(shift.worked_hours)}h · {shift.resolved_day_type}
-        </p>
+      <div
+        className={`flex items-center gap-2 ${isOver ? 'text-gray-400 line-through decoration-gray-400 dark:text-gray-500' : ''}`}
+      >
+        <span
+          className="h-2.5 w-2.5 shrink-0 rounded-full"
+          style={{ backgroundColor: jobColor, opacity: isOver ? 0.4 : 1 }}
+        />
+        <div>
+          <p className="font-medium text-gray-900 dark:text-gray-100">{jobName}</p>
+          <p className="text-xs text-gray-500">
+            {shift.start_time}–{shift.end_time} · {roundTo2(shift.worked_hours)}h · {shift.resolved_day_type}
+          </p>
+        </div>
       </div>
       <div className="flex items-center gap-2">
         {!confirmingDelete && (
@@ -160,9 +169,7 @@ function ExtraIncomeRow({
   return (
     <div className="flex items-center justify-between border-b border-gray-100 px-2 py-3 text-sm last:border-b-0 dark:border-gray-700/50">
       <div>
-        <p className="font-medium text-gray-900 dark:text-gray-100">
-          {income.income_date} · {income.description}
-        </p>
+        <p className="font-medium text-gray-900 dark:text-gray-100">{income.description}</p>
         <p className="text-xs text-gray-500">額外收入</p>
       </div>
       <div className="flex items-center gap-2">
@@ -277,6 +284,7 @@ export function ShiftsWeeklyPage() {
   const { format } = useCurrency()
 
   const jobName = (jobId: number) => jobs?.find((j) => j.id === jobId)?.name ?? `Job #${jobId}`
+  const jobColor = (jobId: number) => jobs?.find((j) => j.id === jobId)?.color ?? fallbackJobColor(jobId)
 
   const totalShiftPay = shifts?.reduce((sum, s) => sum + Number(s.gross_pay), 0) ?? 0
   const totalExtraIncome = extraIncome?.reduce((sum, i) => sum + Number(i.amount), 0) ?? 0
@@ -284,9 +292,21 @@ export function ShiftsWeeklyPage() {
   const totalWorkedHours = shifts?.reduce((sum, s) => sum + Number(s.worked_hours), 0) ?? 0
 
   const now = new Date()
-  const orderedShifts = shifts
-    ? [...shifts].sort((a, b) => Number(isShiftOver(a, now)) - Number(isShiftOver(b, now)))
-    : shifts
+
+  // Group shifts and extra income by date so the list reads as a day-by-day
+  // schedule instead of one long flat list.
+  const dayGroups = new Map<string, { shifts: Shift[]; incomes: ExtraIncome[] }>()
+  shifts?.forEach((shift) => {
+    const group = dayGroups.get(shift.shift_date) ?? { shifts: [], incomes: [] }
+    group.shifts.push(shift)
+    dayGroups.set(shift.shift_date, group)
+  })
+  extraIncome?.forEach((income) => {
+    const group = dayGroups.get(income.income_date) ?? { shifts: [], incomes: [] }
+    group.incomes.push(income)
+    dayGroups.set(income.income_date, group)
+  })
+  const orderedDays = [...dayGroups.entries()].sort(([a], [b]) => a.localeCompare(b))
 
   const isEmpty = (shifts?.length ?? 0) === 0 && (extraIncome?.length ?? 0) === 0
 
@@ -318,34 +338,44 @@ export function ShiftsWeeklyPage() {
         {isLoading && <p className="text-sm text-gray-500">載入中...</p>}
         <div className="flex flex-col">
           {isEmpty && <p className="text-sm text-gray-500">這週還沒有班表或額外收入</p>}
-          {orderedShifts?.map((shift) => (
-            <ShiftRow
-              key={shift.id}
-              shift={shift}
-              jobName={jobName(shift.job_id)}
-              isOver={isShiftOver(shift, now)}
-              confirmingDelete={confirmDeleteId === shift.id}
-              onEditClick={() => setEditingShift(shift)}
-              onDeleteClick={() => setConfirmDeleteId(shift.id)}
-              onCancelDelete={() => setConfirmDeleteId(null)}
-              onConfirmDelete={() => {
-                deleteShift.mutate(shift.id)
-                setConfirmDeleteId(null)
-              }}
-            />
-          ))}
-          {extraIncome?.map((income) => (
-            <ExtraIncomeRow
-              key={income.id}
-              income={income}
-              confirmingDelete={confirmDeleteIncomeId === income.id}
-              onDeleteClick={() => setConfirmDeleteIncomeId(income.id)}
-              onCancelDelete={() => setConfirmDeleteIncomeId(null)}
-              onConfirmDelete={() => {
-                deleteExtraIncome.mutate(income.id)
-                setConfirmDeleteIncomeId(null)
-              }}
-            />
+          {orderedDays.map(([date, group]) => (
+            <div key={date}>
+              <p className="mt-3 px-2 text-xs font-semibold text-gray-500 first:mt-0 dark:text-gray-400">
+                {formatDisplayDate(parseIsoDate(date))}
+              </p>
+              {[...group.shifts]
+                .sort((a, b) => a.start_time.localeCompare(b.start_time))
+                .map((shift) => (
+                  <ShiftRow
+                    key={shift.id}
+                    shift={shift}
+                    jobName={jobName(shift.job_id)}
+                    jobColor={jobColor(shift.job_id)}
+                    isOver={isShiftOver(shift, now)}
+                    confirmingDelete={confirmDeleteId === shift.id}
+                    onEditClick={() => setEditingShift(shift)}
+                    onDeleteClick={() => setConfirmDeleteId(shift.id)}
+                    onCancelDelete={() => setConfirmDeleteId(null)}
+                    onConfirmDelete={() => {
+                      deleteShift.mutate(shift.id)
+                      setConfirmDeleteId(null)
+                    }}
+                  />
+                ))}
+              {group.incomes.map((income) => (
+                <ExtraIncomeRow
+                  key={income.id}
+                  income={income}
+                  confirmingDelete={confirmDeleteIncomeId === income.id}
+                  onDeleteClick={() => setConfirmDeleteIncomeId(income.id)}
+                  onCancelDelete={() => setConfirmDeleteIncomeId(null)}
+                  onConfirmDelete={() => {
+                    deleteExtraIncome.mutate(income.id)
+                    setConfirmDeleteIncomeId(null)
+                  }}
+                />
+              ))}
+            </div>
           ))}
         </div>
       </Card>

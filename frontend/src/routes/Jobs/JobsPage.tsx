@@ -9,6 +9,7 @@ import { useCreateJob, useJobs, useUpdateJob } from '../../hooks/useJobs'
 import { useCreateJobPayRule, useJobPayRules, useUpdateJobPayRule } from '../../hooks/useJobPayRules'
 import { toIsoDate } from '../../lib/dateHelpers'
 import { roundTo2 } from '../../lib/formatNumber'
+import { fallbackJobColor, JOB_COLOR_PALETTE, nextUnusedColor } from '../../lib/jobColors'
 import type { Job, JobPayRule } from '../../types/api'
 
 function formatRate(rate: string | null | undefined): string {
@@ -19,6 +20,7 @@ interface JobFormValues {
   name: string
   employer_type: 'award' | 'cash'
   state: string
+  color: string
   custom_weekday_rate: string
   custom_saturday_rate: string
   custom_sunday_rate?: string
@@ -30,6 +32,7 @@ const jobSchema = z.object({
   name: z.string().min(1, '請輸入工作名稱'),
   employer_type: z.enum(['award', 'cash']),
   state: z.string().min(2, '請輸入州別,如 NSW'),
+  color: z.string().min(1, '請選擇顏色標籤'),
   custom_weekday_rate: z.string().min(1, '請輸入平日時薪'),
   custom_saturday_rate: z.string().min(1, '請輸入週六時薪'),
   custom_sunday_rate: z.string().optional(),
@@ -50,11 +53,14 @@ function JobFormModal({
   const updateJob = useUpdateJob(job?.id ?? 0)
   const createRule = useCreateJobPayRule()
   const updateRule = useUpdateJobPayRule()
+  const { data: allJobs } = useJobs()
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
@@ -63,14 +69,21 @@ function JobFormModal({
           name: job.name,
           employer_type: job.employer_type,
           state: job.state,
+          color: job.color ?? fallbackJobColor(job.id),
           custom_weekday_rate: formatRate(currentRule?.custom_weekday_rate),
           custom_saturday_rate: formatRate(currentRule?.custom_saturday_rate),
           custom_sunday_rate: formatRate(currentRule?.custom_sunday_rate),
           custom_public_holiday_rate: formatRate(currentRule?.custom_public_holiday_rate),
           effective_from: currentRule?.effective_from ?? toIsoDate(new Date()),
         }
-      : { employer_type: 'award', state: 'NSW', effective_from: toIsoDate(new Date()) },
+      : {
+          employer_type: 'award',
+          state: 'NSW',
+          color: nextUnusedColor(allJobs?.map((j) => j.color) ?? []),
+          effective_from: toIsoDate(new Date()),
+        },
   })
+  const selectedColor = watch('color')
 
   const onSubmit = handleSubmit(async (values) => {
     setSubmitError(null)
@@ -152,6 +165,27 @@ function JobFormModal({
             />
             {errors.state && <p className="mt-1 text-xs text-red-600">{errors.state.message}</p>}
           </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-gray-500">顏色標籤</label>
+          <input type="hidden" {...register('color')} />
+          <div className="flex flex-wrap gap-2">
+            {JOB_COLOR_PALETTE.map((color) => (
+              <button
+                key={color}
+                type="button"
+                aria-label={`選擇顏色 ${color}`}
+                onClick={() => setValue('color', color, { shouldValidate: true })}
+                className="h-7 w-7 rounded-full"
+                style={{
+                  backgroundColor: color,
+                  outline: selectedColor === color ? '2px solid currentColor' : 'none',
+                  outlineOffset: '2px',
+                }}
+              />
+            ))}
+          </div>
+          {errors.color && <p className="mt-1 text-xs text-red-600">{errors.color.message}</p>}
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div>
@@ -243,10 +277,16 @@ export function JobsPage() {
               key={job.id}
               className="flex items-center justify-between border-b border-gray-100 px-2 py-3 text-sm last:border-b-0 dark:border-gray-700/50"
             >
-              <div>
-                <span className="font-medium">{job.name}</span>{' '}
-                <span className="text-xs text-gray-500">
-                  ({job.employer_type === 'cash' ? '現金' : 'Award'} · {job.state})
+              <div className="flex items-center gap-2">
+                <span
+                  className="h-3 w-3 shrink-0 rounded-full"
+                  style={{ backgroundColor: job.color ?? fallbackJobColor(job.id) }}
+                />
+                <span>
+                  <span className="font-medium">{job.name}</span>{' '}
+                  <span className="text-xs text-gray-500">
+                    ({job.employer_type === 'cash' ? '現金' : 'Award'} · {job.state})
+                  </span>
                 </span>
               </div>
               <button

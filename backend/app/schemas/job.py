@@ -5,6 +5,7 @@ class JobCreate(BaseModel):
     name: str
     employer_type: str
     state: str
+    color: str | None = None
     notes: str | None = None
 
 
@@ -13,6 +14,7 @@ class JobUpdate(BaseModel):
     employer_type: str | None = None
     state: str | None = None
     is_active: bool | None = None
+    color: str | None = None
     notes: str | None = None
 
 
@@ -22,4 +24,5 @@ class JobRead(BaseModel):
     employer_type: str
     state: str
     is_active: bool
+    color: str | None
     notes: str | None

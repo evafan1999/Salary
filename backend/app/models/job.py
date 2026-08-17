@@ -9,5 +9,6 @@ class Job(SQLModel, table=True):
     employer_type: str = Field(description="'award' or 'cash'")
     state: str = Field(description="2-letter AU state code, e.g. NSW")
     is_active: bool = Field(default=True)
+    color: str | None = Field(default=None, description="Hex color tag, e.g. #4c9f70")
     notes: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

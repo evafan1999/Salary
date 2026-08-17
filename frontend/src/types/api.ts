@@ -7,6 +7,7 @@ export interface Job {
   employer_type: 'award' | 'cash'
   state: string
   is_active: boolean
+  color: string | null
   notes: string | null
 }
 
@@ -14,6 +15,7 @@ export interface JobCreate {
   name: string
   employer_type: 'award' | 'cash'
   state: string
+  color?: string | null
   notes?: string | null
 }
 
@@ -22,6 +24,7 @@ export interface JobUpdate {
   employer_type?: 'award' | 'cash'
   state?: string
   is_active?: boolean
+  color?: string | null
   notes?: string | null
 }
 
