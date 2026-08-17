@@ -76,11 +76,17 @@ export function DashboardPage() {
   // A day "off" is a day with neither a shift nor extra income; only counts
   // days that have actually happened (up through today), since future days
   // in the currently-in-progress month aren't "off" yet, just not here.
+  // Pre-scheduled future shifts (e.g. from 循環週期) can exist later in the
+  // same month, so the income-day set must be clipped to "today or earlier"
+  // too — otherwise those future days inflate the count and can make
+  // daysOff bottom out at 0 well before the month is actually elapsed.
   const today = new Date()
-  const incomeDays = new Set<string>([
-    ...dailyHoursMap.keys(),
-    ...(monthExtraIncome?.map((i) => i.income_date) ?? []),
-  ])
+  const todayIso = toIsoDate(today)
+  const incomeDays = new Set<string>(
+    [...dailyHoursMap.keys(), ...(monthExtraIncome?.map((i) => i.income_date) ?? [])].filter(
+      (date) => date <= todayIso,
+    ),
+  )
   let elapsedDaysInMonth = 0
   if (monthStart <= today) {
     const effectiveEnd = monthEnd < today ? monthEnd : today
